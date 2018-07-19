@@ -1,0 +1,6 @@
+html,body,.view{
+	height: 100%;
+}
+.view{
+	min-width: 1170px;
+}
