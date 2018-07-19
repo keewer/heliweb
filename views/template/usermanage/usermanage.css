@@ -1,0 +1,44 @@
+.usermanage .usermanage-title{
+	font-size: 24px;
+	line-height: 50px;
+}
+.usermanage .usermanage-pagination{
+	text-align: center;
+}
+
+.usermanage .usermanage-pagination li{
+	cursor: pointer;
+}
+.usermanage .usermanage-top{
+	height: 50px;
+}
+
+.usermanage .usermanage-top>.usermanage-title{
+	float: left;
+}
+
+.usermanage .usermanage-operation{
+	float: right;
+	height: 50px;
+}
+
+.usermanage .add-btn{
+	margin-top: 8px;
+	margin-left: 50px;
+	margin-right: 50px;
+}
+
+.usermanage .search{
+	margin-top: 8px;
+	width: 200px;
+}
+
+.usermanage .searching{
+	cursor: pointer;
+	transition: background-color .3s;
+}
+
+.usermanage .searching:hover{
+	background-color: #337AB7;
+	color: #efefef;
+}

@@ -1,0 +1,105 @@
+.home{
+	height: 100%;
+}
+
+.home .home-nav{
+	padding: 0 30px;
+	height: 65px;
+	background-color: #2A303C;
+}
+
+.home .home-logo{
+	width: 45px;
+	margin-top: 10px;
+	float: left;
+}
+
+.home .user-info{
+	float: right;
+	color: #efefef;
+	overflow: hidden;
+}
+
+.home .user-info>span{
+	float: left;
+}
+
+.home .user-name{
+	height: 45px;
+	line-height: 45px;
+	margin-top: 10px;
+	margin-right: 30px;
+}
+
+.home .logout{
+	height: 35px;
+	padding: 0 10px;
+	border: 1px solid rgba(255, 255, 255, .2);
+	line-height: 35px;
+	border-radius: 5px;
+	margin-top: 15px;
+	cursor: pointer;
+	transition: background-color .3s;
+}
+
+.home .logout:hover{
+	background-color: #343C4C;
+}
+
+.home .main{
+	height: calc(100% - 65px);
+}
+
+.home .main-left{
+	padding-top: 15px;
+	width: 200px;
+	height: 100%;
+	background-color: #1F2531;
+	float: left;
+	color: #efefef;
+}
+.home .main-left li{
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	position: relative;
+	border-bottom: 1px solid rgba(255, 255, 255, .2);
+	cursor: pointer;
+	transition: background-color .3s;
+}
+
+.home .main-left li:hover{
+	background-color: #343C4C;
+}
+
+.home .main-left li.active-bg{
+	background-color: #343C4C;
+}
+
+.home .main-left li>i{
+	position: absolute;
+	left: 15px;
+	top: 13px;
+}
+
+.home .main-right{
+	float: left;
+	width: calc(100% - 200px);
+	height: 100%;
+	padding: 15px;
+	position: relative;
+	padding-bottom: 55px;
+}
+
+.home .company{
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 40px;
+	background-color: #2A303C;
+	line-height: 40px;
+	color: #efefef;
+	text-align: center;
+	font-size: 12px;
+}

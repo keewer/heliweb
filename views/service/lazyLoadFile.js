@@ -13,5 +13,19 @@ angular.module('app')
 				'template/forgot/forgot.css',
 				'template/forgot/forgotController.js'
 			]
+		},
+		{
+			name: 'home',
+			files: [
+				'template/home/home.css',
+				'template/home/homeController.js'
+			]
+		},
+		{
+			name: 'usermanage',
+			files: [
+				'template/usermanage/usermanage.css',
+				'template/usermanage/usermanageController.js'
+			]
 		}
 	]);

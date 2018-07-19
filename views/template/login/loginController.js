@@ -1,5 +1,5 @@
 angular.module('app')
-	.controller('loginController', ['$scope', function ($scope) {
+	.controller('loginController', ['$scope', '$state', function ($scope, $state) {
 		
 		$scope.userInfo = {
 			phone: '',
@@ -8,5 +8,10 @@ angular.module('app')
 		};
 
 		$scope.codeText = '10000';
+
+		$scope.login = function () {
+			console.log('login');
+			$state.go('home.usermanage');
+		} 
 
 	}])

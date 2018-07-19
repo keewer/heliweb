@@ -1,0 +1,69 @@
+<div class="usermanage">
+	<div class="usermanage-top">
+		<div class="usermanage-title">用户管理</div>
+		<div class="usermanage-operation">
+			
+			
+			<div class="pull-left search">
+				<div class="form-group">
+					<div class="input-group">
+						<input class="form-control" type="text" name="search" placeholder="搜索..." />
+						<span class="input-group-addon searching">
+							<i class="fa fa-search"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="pull-left add-btn">
+				<button class="btn btn-primary">添加总代理</button>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>总代理名称</th>
+					<th>手机号</th>
+					<th>状态</th>
+					<th>地址</th>
+					<th>登录次数</th>
+					<th>最后一次登录时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="item in userList track by $index">
+					<td>{{$index + 1}}</td>
+					<td>{{item.name}}</td>
+					<td>{{item.phone}}</td>
+					<td>{{item.status}}</td>
+					<td>{{item.address}}</td>
+					<td>{{item.loginCount}}</td>
+					<td>{{item.lastLoginTime}}</td>
+					<th>
+						<button class="btn btn-xs btn-success">查看分销商</button>
+						<button class="btn btn-xs btn-warning">启用</button>
+						<button class="btn btn-xs btn-danger">禁用</button>
+					</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="usermanage-pagination">
+		<ul class="pagination">
+	    <li><span>上一页</span></li>
+	    <li><span>1</span></li>
+	    <li><span>2</span></li>
+	    <li><span>3</span></li>
+	    <li><span>4</span></li>
+	    <li><span>5</span></li>
+	    <li><span>下一页</span></li>
+	    <li><span>共5页</span></li>
+	  </ul>
+  </div>
+</div>
