@@ -1,3 +1,7 @@
+.usermanage{
+	height: 100%;
+	overflow-y: auto;
+}
 .usermanage .usermanage-title{
 	font-size: 24px;
 	line-height: 50px;

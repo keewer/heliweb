@@ -16,3 +16,7 @@ td,th{
 td{
 	vertical-align: middle !important;
 }
+
+.distext{
+	color: #ccc !important;
+}

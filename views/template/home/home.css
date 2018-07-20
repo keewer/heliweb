@@ -89,6 +89,7 @@
 	padding: 15px;
 	position: relative;
 	padding-bottom: 55px;
+	overflow: hidden;
 }
 
 .home .company{
@@ -102,4 +103,8 @@
 	color: #efefef;
 	text-align: center;
 	font-size: 12px;
+}
+
+.home .main-view{
+	height: 100%;
 }
