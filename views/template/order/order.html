@@ -1,0 +1,184 @@
+<div class="order">
+	<div class="order-top">
+		<div class="order-title">订单管理/<span class="second-order-title">总代理订单/分销商订单</span></div>
+		<div class="order-operation">
+			<div class="pull-left search">
+				<div class="form-group">
+					<div class="input-group">
+						<input class="form-control" type="text" name="search" placeholder="搜索分销商订单..." />
+						<span class="input-group-addon searching">
+							<i class="fa fa-search"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="pull-left add-btn" ng-if="authority === 3">
+				<button class="btn btn-primary" data-toggle="modal" data-target="#agent">新建订单</button>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>订单编号</th>
+					<th>商品编号</th>
+					<th>商品名称</th>
+					<th>商品数量</th>
+					<th>订单状态</th>
+					<th>总代理</th>
+					<th>收货人</th>
+					<th>收货人手机号</th>
+					<th>收货地址</th>
+					<th>订单日期</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="item in pageDataList track by $index">
+					<td>{{item.num + 1}}</td>
+					<td>{{item.code}}</td>
+					<td>{{item.pcode}}</td>
+					<td>{{item.name}}</td>
+					<td>{{item.count}}</td>
+					<td>{{item.status === 0 ? '待付款' : item.status === 1 ? '已付款' : item.status === 2 ? '已发货' : item.status === 3 ? '已收货': '无效'}}</td>
+					<td>{{item.agent}}</td>
+					<td>{{item.receiver}}</td>
+					<td>{{item.phone}}</td>
+					<td>{{item.address}}</td>
+					<td>{{item.orderTime}}</td>
+					<th>
+						<button class="btn btn-xs btn-success" ng-if="item.status === 0">付款</button>
+						<button class="btn btn-xs btn-danger" ng-if="item.status === 0">删除</button>
+						<button class="btn btn-xs btn-warning" ng-if="item.status === 1 || item.status === 2" ng-disabled="item.status === 1">确认收货</button>
+						<button class="btn btn-xs btn-defult" ng-if="item.status === 3" ng-disabled="item.status === 3">已完成</button>
+					</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="order-pagination">
+		<ul class="pagination">
+	    <li ng-click="previousPage()"><span>上一页</span></li>
+	    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
+	    <li ng-click="nextPage()"><span>下一页</span></li>
+	    <li><span>共{{pageCounts}}页</span></li>
+	  </ul>
+  </div>
+
+  <div id="agent" class="modal fade" ng-if="authority === 1 || authority === 3">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+	        <h4 class="modal-title">新建订单</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form name="userForm" novalidate>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-cube"></i>&nbsp;商品名称
+	        			</span>
+	        			<select class="form-control">
+	        				<option>天香鸡</option>
+	        			</select>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-money"></i>&nbsp;商品单价
+	        			</span>
+	        			<input class="form-control" type="text" name="price" ng-model="price" placeholder="商品价格" ng-disabled="true" />
+	        		</div>
+	        	</div>
+
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-database"></i>&nbsp;商品数量
+	        			</span>
+	        			<input class="form-control" type="text" name="count" autocomplete="off" placeholder="商品数量" ng-model="userInfo.count" ng-required="true" ng-pattern="/^[1-9]\d*$/" />
+	        		</div>
+	        		<div ng-hide="userForm.count.$pristine">
+								<div class="alert alert-danger" ng-show="userForm.count.$error.required">
+									<p>数量必填</p>
+								</div>
+								<div class="alert alert-danger" ng-show="userForm.count.$error.pattern">
+									<p>数量只能填写数字，且不能以0开头</p>
+								</div>
+								<div class="alert alert-danger" ng-show="userInfo.count <= 0">
+									<p>数量至少为1</p>
+								</div>
+							</div>
+	        	</div>
+
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-user"></i>&nbsp;收货人
+	        			</span>
+	        			<input class="form-control" type="password" name="receive" autocomplete="off" placeholder="收货人(分销商真实姓名)" ng-model="userInfo.receive" ng-required="true" />
+	        		</div>
+	        		<div ng-hide="userForm.receive.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.receive.$error.required">
+									<p>收货人必填</p>
+								</div>
+	        		</div>
+	        	</div>
+
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-mobile fa-lg"></i>&nbsp;手机号码
+	        			</span>
+	        			<input class="form-control" type="text" name="phone" autocomplete="off" placeholder="手机号码" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" />
+	        		</div>
+	        		<div ng-hide="userForm.phone.$pristine">
+								<div class="alert alert-danger" ng-show="userForm.phone.$error.required">
+									<p>手机号必填</p>
+								</div>
+								<div class="alert alert-danger" ng-show="userForm.phone.$error.pattern">
+									<p>手机号格式错误</p>
+								</div>
+							</div>
+	        	</div>
+	      
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-location-arrow"></i>&nbsp;收货地址
+	        			</span>
+	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/[<>]+/" ng-model="userInfo.address" ng-maxlength="30" />
+	        		</div>
+	        		<div ng-hide="userForm.address.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.address.$error.required">
+	        				收货地址必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="!userForm.address.$error.pattern">
+	        				收货地址不能含有< >符号
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">
+	        				收货地址过长，最多30个字符
+	        			</div>
+	        		</div>
+	        	</div>
+	        </form>
+	        <div class="clearfix">
+	        	<span class="pull-right total-money">订单总价: <span class="money">100</span>元</span>
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid">确认</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</div>

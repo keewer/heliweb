@@ -1,0 +1,48 @@
+.distributor{
+	height: 100%;
+	overflow-y: auto;
+}
+.distributor .distributor-title{
+	font-size: 24px;
+	line-height: 50px;
+}
+.distributor .distributor-pagination{
+	text-align: center;
+}
+
+.distributor .distributor-pagination li{
+	cursor: pointer;
+}
+.distributor .distributor-top{
+	height: 50px;
+}
+
+.distributor .distributor-top>.distributor-title{
+	float: left;
+}
+
+.distributor .distributor-operation{
+	float: right;
+	height: 50px;
+}
+
+.distributor .add-btn{
+	margin-top: 8px;
+	margin-left: 50px;
+	margin-right: 50px;
+}
+
+.distributor .search{
+	margin-top: 8px;
+	width: 200px;
+}
+
+.distributor .searching{
+	cursor: pointer;
+	transition: background-color .3s;
+}
+
+.distributor .searching:hover{
+	background-color: #337AB7;
+	color: #efefef;
+}

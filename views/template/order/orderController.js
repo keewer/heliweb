@@ -1,43 +1,46 @@
 angular.module('app')
-	.controller('usermanageController', ['$scope', function ($scope) {
-
+	.controller('orderController', ['$scope', function ($scope) {
 		//权限
-		$scope.authority = 1;
+		$scope.authority = 3;
+
+		$scope.price = 100;
 
 		$scope.userInfo = {
 			phone: '',
-			pwd: '',
-			repwd: '',
-			username: '',
-			idcard: '',
+			count: '',
+			receive: '',
 			address: ''
 		};
 
-		var userList = [];
+		var orderList = [];
+
+		/**
+		* 0: 待付款, 1: 已付款, 2: 已发货, 3: 已收货
+		**/
 
 		for (var i = 0; i < 32; i++) {
 				var o = {
 					num: i,
-					name: '刘亦菲' + (i + 1),
-					phone: '1321121221',
-					position: '总代理',
+					code: 'TXJ' + (201811111111 + i + 1),
+					pcode: 'AFF33333',
+					name: '天香鸡' + (i + 1),
+					count: 100,
 					status: 1,
+					agent: '康刘勇',
+					receiver: '天美',
+					phone: '15219209751',
 					address: '广州市',
-					primaryRelationship: '无',
-					secondaryRelationship: '无',
-					loginCount: 19,
-					lastLoginTime: '2018-12-11 23:43:32',
-					cls: {active: false}
+					orderTime: '2018-12-11 23:43:32'
 				};
 
-				userList.push(o);
+				orderList.push(o);
 
 		}
 
-		initPagination(userList);
+		initPagination(orderList);
 
 		//初始化分页
-		function initPagination(userList) {
+		function initPagination(orderList) {
 			
 
 			//分页
@@ -51,7 +54,7 @@ angular.module('app')
 			var activePage = null;
 
 			//分页数
-			$scope.pageCounts = Math.ceil(userList.length / everyPageDate);
+			$scope.pageCounts = Math.ceil(orderList.length / everyPageDate);
 
 			//每一页显示数组数据
 			$scope.pageDataList = [];
@@ -86,7 +89,7 @@ angular.module('app')
 
 			//获取初始化每一个数据
 			function initPageDataList(fromIndex, toIndex) {
-				$scope.pageDataList = userList.slice(fromIndex, toIndex);
+				$scope.pageDataList = orderList.slice(fromIndex, toIndex);
 			}
 
 			//点击激活页码
@@ -165,7 +168,7 @@ angular.module('app')
 		      return;
 		    }
 
-		    $scope.pageDataList = userList.slice((activePage.count - 2) * everyPageDate, (activePage.count - 1) * everyPageDate);
+		    $scope.pageDataList = orderList.slice((activePage.count - 2) * everyPageDate, (activePage.count - 1) * everyPageDate);
 
 		    //如果当前页码不是1并且最后一页是最大分页数, 则显示页码上一页码, 隐藏后面一个
 		    if ($scope.pageData[0].cls.active && $scope.pageData[0].count !== 1) {
@@ -190,7 +193,7 @@ angular.module('app')
 		      return;
 		    }
 
-		    $scope.pageDataList = userList.slice(activePage.count * everyPageDate, (activePage.count + 1) * everyPageDate);
+		    $scope.pageDataList = orderList.slice(activePage.count * everyPageDate, (activePage.count + 1) * everyPageDate);
 
 		    // 如果当前页码是最后一页并且最后一页不是最大分页数, 则显示下一页页码, 第一个页码
 		    if ($scope.pageData[$scope.pageData.length - 1].cls.active && $scope.pageData[$scope.pageData.length - 1].count !== $scope.pageCounts) {
@@ -212,5 +215,4 @@ angular.module('app')
 
   	}
 
-
-	}])
+	}]);

@@ -1,0 +1,66 @@
+<div class="distributor">
+		<div class="distributor-top">
+		<div class="distributor-title">用户管理</div>
+		<div class="distributor-operation">			
+			<div class="pull-left search">
+				<div class="form-group">
+					<div class="input-group">
+						<input class="form-control" type="text" name="search" placeholder="搜索分销商..." />
+						<span class="input-group-addon searching">
+							<i class="fa fa-search"></i>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>姓名</th>
+					<th>手机号</th>
+					<th>职位</th>
+					<th>状态</th>
+					<th>收货地址</th>
+					<th>主关系</th>
+					<th>次关系</th>
+					<th>登录次数</th>
+					<th>最后一次登录时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="item in pageDataList track by $index">
+					<td>{{item.num + 1}}</td>
+					<td>{{item.name}}</td>
+					<td>{{item.phone}}</td>
+					<td>{{item.position}}</td>
+					<td>{{item.status === 1 ? '正常' : '禁用'}}</td>
+					<td>{{item.address}}</td>
+					<td>{{item.primaryRelationship}}</td>
+					<td>{{item.secondaryRelationship}}</td>
+					<td>{{item.loginCount}}</td>
+					<td>{{item.lastLoginTime}}</td>
+					<th>
+						<button class="btn btn-xs btn-success" ng-if="authority === 0 || authority === 1" ng-click="goState('home.distributor')">查看分销商</button>
+						<button class="btn btn-xs btn-warning" ng-if="item.status === 0">启用</button>
+						<button class="btn btn-xs btn-danger" ng-if="item.status === 1">禁用</button>
+					</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="distributor-pagination">
+		<ul class="pagination">
+	    <li ng-click="previousPage()"><span>上一页</span></li>
+	    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
+	    <li ng-click="nextPage()"><span>下一页</span></li>
+	    <li><span>共{{pageCounts}}页</span></li>
+	  </ul>
+  </div>
+
+</div>

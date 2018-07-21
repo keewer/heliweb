@@ -1,18 +1,5 @@
 angular.module('app')
-	.controller('usermanageController', ['$scope', function ($scope) {
-
-		//权限
-		$scope.authority = 1;
-
-		$scope.userInfo = {
-			phone: '',
-			pwd: '',
-			repwd: '',
-			username: '',
-			idcard: '',
-			address: ''
-		};
-
+	.controller('distributorController', ['$scope', function ($scope) {
 		var userList = [];
 
 		for (var i = 0; i < 32; i++) {
@@ -23,7 +10,7 @@ angular.module('app')
 					position: '总代理',
 					status: 1,
 					address: '广州市',
-					primaryRelationship: '无',
+					primaryRelationship: '刘亦菲',
 					secondaryRelationship: '无',
 					loginCount: 19,
 					lastLoginTime: '2018-12-11 23:43:32',
@@ -211,6 +198,5 @@ angular.module('app')
 		  }
 
   	}
-
-
+		
 	}])

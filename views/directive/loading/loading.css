@@ -1,0 +1,66 @@
+.loading{
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	z-index: 7;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .3);
+}
+
+.loading>.loading-tip{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	width: 120px;
+	height: 70px;
+	background-color: rgba(0, 0, 0, .65);
+	border-radius: 10px;
+}
+
+.loading>.loading-tip>.loading-lines{
+	width: 65px;
+	height: 30px;
+	margin: 20px auto;
+}
+
+.loading>.loading-tip .line{
+	float: left;
+	height: 100%;
+	width: 3px;
+	background-color: #efefef;
+	margin: 0 5px;
+	transform: scaleY(.5);
+}
+
+.loading>.loading-tip	.line1{
+	animation: lines .6s linear 0s infinite alternate;
+}
+.loading>.loading-tip	.line2{
+	animation: lines .6s linear .15s infinite alternate;
+}
+.loading>.loading-tip	.line3{
+	animation: lines .6s linear .3s infinite alternate;
+}
+.loading>.loading-tip	.line4{
+	animation: lines .6s linear .45s infinite alternate;
+}
+.loading>.loading-tip	.line5{
+	animation: lines .6s linear .6s infinite alternate;
+}
+			
+
+@keyframes lines {
+	0% {
+		transform: scaleY(.5);
+	}
+
+	100%{
+		transform: scaleY(1);
+	}
+}

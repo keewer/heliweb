@@ -10,22 +10,10 @@
 	</div>
 	<div class="main">
 		<div class="main-left">
-			<ul class="list-unstyled">
-				<li class="active-bg">
-					<i class="fa fa-users"></i>
-					<span>用户管理</span>
-				</li>
-				<li>
-					<i class="fa fa-server"></i>
-					<span>订单管理</span>
-				</li>
-				<li>
-					<i class="fa fa-bar-chart"></i>
-					<span>数据统计</span>
-				</li>
-				<li>
-					<i class="fa fa-user"></i>
-					<span>个人中心</span>
+			<ul id="homeList" class="list-unstyled">
+				<li ng-repeat="item in list track by $index" ng-class="item.licls" ng-click="toggleList(item)">
+					<i class="fa" ng-class="item.iconcls"></i>
+					<span>{{item.name}}</span>
 				</li>
 			</ul>
 		</div>

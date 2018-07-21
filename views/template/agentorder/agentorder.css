@@ -1,0 +1,51 @@
+.agentorder{
+	height: 100%;
+	overflow-y: auto;
+}
+.agentorder .agentorder-title{
+	font-size: 24px;
+}
+.agentorder .agentorder-pagination{
+	text-align: center;
+}
+
+.agentorder .agentorder-pagination li{
+	cursor: pointer;
+}
+.agentorder .agentorder-top{
+	height: 50px;
+}
+
+.agentorder .agentorder-top>.agentorder-title{
+	float: left;
+}
+
+.agentorder .agentorder-operation{
+	float: right;
+	height: 50px;
+}
+
+.agentorder .add-btn{
+	margin-top: 8px;
+	margin-left: 50px;
+	margin-right: 50px;
+}
+
+.agentorder .search{
+	margin-top: 8px;
+	width: 200px;
+}
+
+.agentorder .searching{
+	cursor: pointer;
+	transition: background-color .3s;
+}
+
+.agentorder .searching:hover{
+	background-color: #337AB7;
+	color: #efefef;
+}
+
+.agentorder .second-agentorder-title{
+	font-size: 18px
+}

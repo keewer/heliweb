@@ -27,5 +27,40 @@ angular.module('app')
 				'template/usermanage/usermanage.css',
 				'template/usermanage/usermanageController.js'
 			]
+		},
+		{
+			name: 'distributor',
+			files: [
+				'template/distributor/distributor.css',
+				'template/distributor/distributorController.js'
+			]
+		},
+		{
+			name: 'order',
+			files: [
+				'template/order/order.css',
+				'template/order/orderController.js'
+			]
+		},
+		{
+			name: 'data',
+			files: [
+				'template/data/data.css',
+				'template/data/dataController.js'
+			]
+		},
+		{
+			name: 'person',
+			files: [
+				'template/person/person.css',
+				'template/person/personController.js'
+			]
+		},
+		{
+			name: 'agentorder',
+			files: [
+				'template/agentorder/agentorder.css',
+				'template/agentorder/agentorderController.js'
+			]
 		}
 	]);
