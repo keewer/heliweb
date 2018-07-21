@@ -1,3 +1,33 @@
 <div class="data">
-	<h1>data</h1>
+	<div class="data-top">
+			<div class="data-title">数据统计</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">商品名称:</div>
+				<div class="start-date pull-left">
+					<select class="form-control">
+						<option>天香鸡</option>
+					</select>
+				</div>
+			</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">开始日期:</div>
+				<div class="start-date pull-left">
+					<input class="form-control" type="date" name="starttime" />
+				</div>
+			</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">结束日期:</div>
+				<div class="start-date pull-left">
+					<input class="form-control" type="date" name="endtime" />
+				</div>
+			</div>
+			<div class="pull-left date">
+				<button class="btn btn-primary" ng-click="generateChart()">生成数据</button>
+				<button class="btn btn-danger" ng-click="clearChart()">清除数据</button>
+			</div>
+			
+	</div>
+	<div id="chart" class="data-content">
+		
+	</div>
 </div>
