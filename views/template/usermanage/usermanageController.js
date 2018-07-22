@@ -1,12 +1,43 @@
 angular.module('app')
 	.controller('usermanageController', ['$scope', '$state', '$cookies', 'API', 'TIP', function ($scope, $state, $cookies, API, TIP) {
 
+		//每一页最多显示几条数据
+		var everyPageDate = 10;
+
+		//分页
+		//最多显示页码标签
+		var pageCode = 10;
+
+		//当前激活页码
+		var activeCode = 1;
+
+		//数据集合
+		var userList = [];
+
+		//分页数
+		$scope.pageCounts = 1;
+
+		//权限
+		$scope.authority = -1;
+
 		var _tVc = $cookies.get('_tVc');
 		if (!_tVc) {
 			$state.go('login');
 		} else {
-			API.fetchPost('/userlist1', {_tVc: _tVc})
+			API.fetchGet('/userlist1', {_tVc: _tVc, offset: (activeCode - 1) * everyPageDate, limit: everyPageDate})
 				.then(function (data) {
+					if (data.data.code == 3000) {
+						data.data.data.forEach(function (v, i) {
+							v.num = i;
+						})
+						$scope.pageCounts = Math.ceil(data.data.count / everyPageDate);
+						userList = data.data.data;
+						$scope.authority = data.data.auth;
+						initPagination(userList);
+					} else {
+						TIP.openDialog(data.data.msg);
+					}
+					
 					console.log('data ==> ', data);
 				})
 				.catch(function (err) {
@@ -14,8 +45,7 @@ angular.module('app')
 				})
 		}
 
-		//权限
-		$scope.authority = 1;
+		
 
 		$scope.userInfo = {
 			phone: '',
@@ -26,45 +56,21 @@ angular.module('app')
 			address: ''
 		};
 
-		var userList = [];
-
-		for (var i = 0; i < 32; i++) {
-				var o = {
-					num: i,
-					name: '刘亦菲' + (i + 1),
-					phone: '1321121221',
-					position: '总代理',
-					status: 1,
-					address: '广州市',
-					primaryRelationship: '无',
-					secondaryRelationship: '无',
-					loginCount: 19,
-					lastLoginTime: '2018-12-11 23:43:32',
-					cls: {active: false}
-				};
-
-				userList.push(o);
-
-		}
-
-		initPagination(userList);
+		
+		
 
 		//初始化分页
 		function initPagination(userList) {
 			
 
-			//分页
-			//最多显示页码标签
-			var pageCode = 10;
+			
 
-			//每一页最多显示几条数据
-			var everyPageDate = 10;
+			
 
 			//激活页码
 			var activePage = null;
 
-			//分页数
-			$scope.pageCounts = Math.ceil(userList.length / everyPageDate);
+			
 
 			//每一页显示数组数据
 			$scope.pageDataList = [];

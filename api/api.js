@@ -12,6 +12,15 @@ class API {
 		return sql.findOne(modelName, attrs, o);
 	}
 
+	findOne(modelName, attrs, o){
+		return sql.findOne(modelName, attrs, o);
+	}
+
+	//分页查询
+	findAndCountAll(modelName, attrs, o, offset, limit) {
+		return sql.findAndCountAll(modelName, attrs, o, offset, limit);
+	}
+
 }
 
 module.exports = new API();

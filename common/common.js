@@ -36,6 +36,24 @@ module.exports = {
 			msg: '密码错误',
 			code: 1013
 		}
+	},
+
+	auth: {
+		success: {
+			msg: '身份校验成功',
+			code: 4000
+		},
+		fail: {
+			msg: '尚未登录',
+			code: 4001
+		}
+	},
+
+	server: {
+		error: {
+			msg: '服务器报错',
+			code: 5000
+		}
 	}
 
 }

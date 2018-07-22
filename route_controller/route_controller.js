@@ -1,8 +1,5 @@
 const utils = require(__basename + '/utils/utils.js');
 
-let p = utils.addCrypto('123456');
-console.log('p ==> ', p);
-
 const api = require(__basename + '/api/api.js');
 
 const common = require(__basename + '/common/common.js');
@@ -13,17 +10,18 @@ class RouteController {
 
 	//token拦截
 	tokenController(req, res, next) {
-		var token = req.body._tVc;
+		var token = req.body._tVc || req.query._tVc;
 		if (!token) {
-			res.json({msg: '尚未登录', code: 4001});
+			res.json(common.auth.fail);
 		} else {
 			//解析token
 			utils.verifyToken(token, function (err, decode) {
 				if (err) {
-					res.json({msg: '尚未登录', code: 4001});
+					res.json(common.auth.fail);
 				} else {
 					console.log(decode);
-					res.json({msg: '身份验证成功', code: 4000});
+					req.phone = decode.name;
+					next();
 				}
 			})
 		}
@@ -37,7 +35,53 @@ class RouteController {
 
 	//用户管理/总代理
 	userlist1Controller(req, res) {
-		res.json({msg: 'success'});
+		api.findOne('User', ['phone', 'auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						var o = {};
+						var auth = result.dataValues.auth;
+						if (auth == 0) {
+							o.auth = {
+								$in: [1,2,3]
+							}
+						} else if (auth == 1) {
+							o.auth = {
+								$in: [2,3]
+							}
+						}
+						var attrs = [
+							'id',
+							'username',
+							'phone',
+							'auth',
+							'lastLoginTime',
+							'loginCount',
+							'address',
+							'status',
+							'position',
+							'primaryRelationship',
+							'secondaryRelationship'
+						];
+						api.findAndCountAll('User', attrs, o, Number(req.query.offset), Number(req.query.limit))
+							.then(result => {
+								res.json({count: result.count, data: result.rows, msg: '查询成功', code: 3000, auth: auth});
+							})
+							.catch(err => {
+								console.log('userlist1Controller出错啦');
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
 	}
 
 	getValidCodeController(req, res) {

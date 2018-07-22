@@ -9,7 +9,7 @@ module.exports = function (app) {
 	app.use(routeController.tokenController);
 
 	//用户管理/总代理
-	app.post('/userlist1', routeController.userlist1Controller)
+	app.get('/userlist1', routeController.userlist1Controller)
 
 	app.post('/validcode', routeController.getValidCodeController);
 

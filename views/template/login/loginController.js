@@ -10,7 +10,6 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchGet('/imgcode')
 				.then(function (data) {
-					console.log('data ==> ', data);
 					if (data.status == 200) {
 						$scope.code.img = data.data.img;
 						$scope.code.text = data.data.text;
