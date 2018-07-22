@@ -108,3 +108,9 @@
 .home .main-view{
 	height: 100%;
 }
+
+.home .home-company{
+	color: #efefef;
+	line-height: 65px;
+	margin-left: 20px;
+}

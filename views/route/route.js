@@ -95,5 +95,15 @@ angular.module('app')
 					}]
 				}
 			})
+			.state('home.product', {
+				url: '/product',
+				templateUrl: 'template/product/product.html',
+				controller: 'productController',
+				resolve: {
+					des: ['$ocLazyLoad', function ($ocLazyLoad) {
+						return $ocLazyLoad.load('product');
+					}]
+				}
+			})
 
 	}])

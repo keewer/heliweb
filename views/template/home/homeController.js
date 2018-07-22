@@ -24,6 +24,13 @@ angular.module('app')
 				url: 'agentorder@order'
 			},
 			{
+				name: '商品管理',
+				iconcls: 'fa-cube',
+				licls: {'active-bg': false},
+				state: 'home.product',
+				url: 'product'
+			},
+			{
 				name: '数据统计',
 				iconcls: 'fa-bar-chart',
 				licls: {'active-bg': false},
@@ -56,6 +63,10 @@ angular.module('app')
 			activeItem = item;
 
 			$state.go(item.state);
+		}
+
+		$scope.logout = function () {
+			$state.go('login');
 		}
 
 	}])

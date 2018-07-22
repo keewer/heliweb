@@ -1,5 +1,6 @@
 html,body,.view{
 	height: 100%;
+	background-color: #fff;
 }
 .view{
 	min-width: 1170px;
@@ -21,6 +22,14 @@ td{
 	color: #ccc !important;
 }
 
+button{
+	outline: none !important;
+}
+
 .ngdialog-close{
 	outline: none !important;
+}
+
+.pagination{
+	user-select: none;
 }

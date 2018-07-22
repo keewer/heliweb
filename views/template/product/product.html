@@ -1,0 +1,168 @@
+<div class="product">
+		<div class="product-top clearfix">
+		<div class="product-title pull-left">商品管理</div>
+		<div class="pull-right add-product" ng-if="authority === 1">
+			<button class="btn btn-success" data-toggle="modal" data-target="#addProduct">录入商品</button>
+		</div>
+	</div>
+	<div class="clearfix product-setting" ng-if="authority === 1">
+		<div class="desc pull-left">商品设置</div>
+		<div class="pull-left date">
+			<div class="pull-left start-date-title">商品名称:</div>
+				<div class="start-date pull-left">
+					<select class="form-control">
+						<option>天香鸡</option>
+					</select>
+				</div>
+			</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">商品单价:</div>
+				<div class="price pull-left">
+					<input class="form-control" type="text" name="starttime" />
+				</div>
+			</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">一级返利:</div>
+				<div class="price pull-left">
+					<input class="form-control" type="text" name="firstgain" />
+				</div>
+			</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">二级返利:</div>
+				<div class="price pull-left">
+					<input class="form-control" type="text" name="secondgain" />
+				</div>
+			</div>
+			<div class="pull-left date">
+				<div class="pull-left start-date-title">三级返利:</div>
+				<div class="price pull-left">
+					<input class="form-control" type="text" name="thirdgain" />
+				</div>
+			</div>
+			<div class="pull-left date">
+				<button class="btn btn-primary">确认设置</button>
+			</div>
+	</div>
+
+	<div class="product-list">
+		<div class="product-list-head clearfix">
+			<div class="desc pull-left">商品列表</div>
+			<div class="product-operation">
+				<div class="pull-left search">
+					<div class="form-group">
+						<div class="input-group">
+							<input class="form-control" type="text" name="search" placeholder="搜索商品..." />
+							<span class="input-group-addon searching">
+								<i class="fa fa-search"></i>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="pull-left add-btn" ng-if="authority === 3">
+					<button class="btn btn-primary" data-toggle="modal" data-target="#agent">新建订单</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-hover table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>商品编号</th>
+						<th>商品名称</th>
+						<th>商品单价</th>
+						<th>一级返利</th>
+						<th>二级返利</th>
+						<th>三级返利</th>
+						<th>设置时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in pageDataList track by $index">
+						<td>{{item.num + 1}}</td>
+						<td>{{item.code}}</td>
+						<td>{{item.name}}</td>
+						<td>{{item.price}}</td>
+						<td>{{item.firstgain}}</td>
+						<td>{{item.secondgain}}</td>
+						<td>{{item.thirdgain}}</td>
+						<td>{{item.settingTime}}</td>
+						<td>
+							<button class="btn btn-warning btn-xs">启用</button>
+							<button class="btn btn-danger btn-xs">禁用</button>
+							<button class="btn btn-default btn-xs">无权限</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="product-pagination">
+			<ul class="pagination">
+		    <li ng-click="previousPage()"><span>上一页</span></li>
+		    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
+		    <li ng-click="nextPage()"><span>下一页</span></li>
+		    <li><span>共{{pageCounts}}页</span></li>
+		  </ul>
+ 	 	</div>
+
+	</div>
+
+		<!-- 录入商品 -->
+	<div id="addProduct" class="modal fade" ng-if="authority === 1">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+	        <h4 class="modal-title">录入商品</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form name="userForm" novalidate>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">商品编号</span>
+	        			<input class="form-control" type="text" name="code" placeholder="商品编号" ng-model="product.code" ng-required="true" ng-pattern="/[<>]+/" ng-maxlength="20" />
+	        		</div>
+	        		<div ng-hide="userForm.code.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.code.$error.required">
+	        				商品编号必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="!userForm.code.$error.pattern">
+	        				商品编号不能含有< >符号
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.code.$error.maxlength">
+	        				商品编号过长，最多16个字符
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">商品名称</span>
+	        			<input class="form-control" type="text" name="name" placeholder="商品名称" ng-model="product.name" ng-required="true" ng-pattern="/[<>]+/" ng-maxlength="16" />
+	        		</div>
+	        		<div ng-hide="userForm.name.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.name.$error.required">
+	        				商品名称必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="!userForm.name.$error.pattern">
+	        				商品名称不能含有< >符号
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.name.$error.maxlength">
+	        				商品名称过长，最多16个字符
+	        			</div>
+	        		</div>
+	        	</div>
+	        </form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid">确认</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+</div>

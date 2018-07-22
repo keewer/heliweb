@@ -62,5 +62,12 @@ angular.module('app')
 				'template/agentorder/agentorder.css',
 				'template/agentorder/agentorderController.js'
 			]
+		},
+		{
+			name: 'product',
+			files: [
+				'template/product/product.css',
+				'template/product/productController.js'
+			]
 		}
 	]);
