@@ -1,0 +1,6 @@
+<ul class="pagination">
+	<li ng-click="pageClick(p)" ng-repeat="p in page" class="{{option.curr == p ? 'active' : '' }}">
+		<span>{{p}}</span>
+	</li>
+	<li><span>共 {{option.all}} 页</span></li>
+</ul>

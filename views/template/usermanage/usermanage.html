@@ -63,13 +63,8 @@
 		</table>
 	</div>
 
-	<div class="usermanage-pagination">
-		<ul class="pagination">
-	    <li ng-click="previousPage()"><span>上一页</span></li>
-	    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
-	    <li ng-click="nextPage()"><span>下一页</span></li>
-	    <li><span>共{{pageCounts}}页</span></li>
-	  </ul>
+	<div id="pagination" class="usermanage-pagination">
+
   </div>
 
   <div id="agent" class="modal fade" ng-if="authority === 1 || authority === 3">
