@@ -21,6 +21,11 @@ class API {
 		return sql.findAndCountAll(modelName, attrs, o, offset, limit);
 	}
 
+	//更新字段
+	update(modelName, attrs, condition) {
+		return sql.update(modelName, attrs, condition);
+	}
+
 }
 
 module.exports = new API();

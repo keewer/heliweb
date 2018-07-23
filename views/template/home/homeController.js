@@ -1,8 +1,35 @@
 angular.module('app')
-	.controller('homeController', ['$scope', '$state', '$location', function ($scope, $state, $location) {
+	.controller('homeController', ['$scope', '$state', '$location',  '$cookies', '$timeout', 'API', 'TIP', function ($scope, $state, $location, $cookies, $timeout, API, TIP) {
 		
-		//权限
-		var authority = 1;
+		$scope.loginUserInfo = {
+			username: '',
+			auth: ''
+		};
+
+		var _tVc = $cookies.get('_tVc');
+		if (!_tVc) {
+			$state.go('login');
+		} else {
+			TIP.openLoading($scope);
+			API.fetchGet('/user', {_tVc: _tVc})
+				.then(function (data) {
+					console.log('data ==> ', data);
+					TIP.hideLoading();
+					if (data.data.code == 1010) {
+						$scope.loginUserInfo.username = data.data.username;
+						$scope.loginUserInfo.auth = data.data.auth;
+					} else {
+						TIP.openDialog(data.data.msg);
+						$setTimeout(function () {
+							$state.go('login');
+						}, 2000);
+					}
+				})
+				.catch(function (err) {
+					TIP.hideLoading();
+					console.log('出错啦');
+				})
+		}
 
 		var path = $location.path().slice(1);
 
@@ -13,14 +40,14 @@ angular.module('app')
 				name: '用户管理',
 				iconcls: 'fa-users',
 				licls: {'active-bg': false},
-				state: authority == 0 || authority == 1 ? 'home.usermanage' : 'home.distributor',
+				state: $scope.loginUserInfo.auth == 0 || $scope.loginUserInfo.auth == 1 ? 'home.usermanage' : 'home.distributor',
 				url: 'usermanage@distributor'
 			},
 			{
 				name: '订单管理',
 				iconcls: 'fa-server',
 				licls: {'active-bg': false},
-				state: authority == 0 || authority == 1 ? 'home.agentorder' : 'home.order',
+				state: $scope.loginUserInfo.auth == 0 || $scope.loginUserInfo.auth == 1 ? 'home.agentorder' : 'home.order',
 				url: 'agentorder@order'
 			},
 			{

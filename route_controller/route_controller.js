@@ -10,6 +10,10 @@ class RouteController {
 
 	//token拦截
 	tokenController(req, res, next) {
+
+		if (req.url == '/' || req.url == '/imgcode' || req.url == '/login') {
+			return next();
+		}
 		var token = req.body._tVc || req.query._tVc;
 		if (!token) {
 			res.json(common.auth.fail);
@@ -31,6 +35,25 @@ class RouteController {
 	indexController(req, res) {
 
 		res.status(200).render('index');
+	}
+
+	userController(req, res) {
+		api.findOne('User', ['username', 'auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.login.disabled);
+					} else {
+						result.dataValues.code = 1010;
+						res.json(result.dataValues);
+					}
+				}
+			})
+			.catch(err => {
+				console.log('userController出错了');
+				res.json(common.server.error);
+			})
 	}
 
 	//用户管理/总代理
@@ -132,17 +155,45 @@ class RouteController {
 	}
 
 	loginController(req, res) {
-		api.login('User', ['phone', 'pwd', 'auth', 'status'], {phone: req.body.phone})
+		console.log(req.body);
+		api.login('User', ['username','phone', 'pwd', 'auth', 'status', 'loginCount'], {phone: req.body.phone})
 			.then(result => {
 				if (result && result.dataValues) {
-					let pwd = utils.addCrypto(req.body.pwd);
 
+					//被禁用者不可登录
+					if (result.dataValues.status === 0) {
+						return res.json(common.login.disabled);
+					}
+
+					let pwd = utils.addCrypto(req.body.pwd);
 					if (pwd === result.dataValues.pwd) {
 						let token = utils.generateToken(req.body.phone);
 						common.login.sucesss._tVc = token;
 						common.login.sucesss.auth = result.dataValues.auth;
 						common.login.sucesss.status = result.dataValues.status;
-						res.json(common.login.sucesss);
+						common.login.sucesss.username = result.dataValues.username;
+
+						//更新登录次数和最后登录时间
+						let lastLoginTime = utils.formatDate(new Date());
+
+						let loginCount = result.dataValues.loginCount + 1;
+						let attrs = {
+							lastLoginTime,
+							loginCount
+						};
+						api.update('User', attrs, {
+							phone: result.dataValues.phone
+						})
+						.then(result => {
+
+							res.json(common.login.sucesss);
+						})
+						.catch(err => {
+							console.log('loginController出错了');
+							res.json(common.login.fail);
+						})
+
+						
 					} else {
 						res.json(common.login.info);
 					}
@@ -153,6 +204,7 @@ class RouteController {
 				
 			})
 			.catch(err => {
+				console.log('loginController出错了');
 				res.json(common.login.fail);
 			})
 	}

@@ -6,6 +6,8 @@ const svgCaptcha = require('svg-captcha');
 
 const jwt = require('jsonwebtoken');
 
+const moment = require('moment');
+
 let transporter = nodemailer.createTransport({
 	host: config.emailOptions.host,
 	port: config.emailOptions.port,
@@ -50,6 +52,10 @@ class Utils {
 
 	verifyToken(token, fn) {
 		jwt.verify(token, config.saltOptions.salt, fn);
+	}
+
+	formatDate(date) {
+		return moment(date).format('YYYY-MM-DD HH:mm:ss');
 	}
 
 }

@@ -2,11 +2,13 @@ const routeController = require(__basename + '/route_controller/route_controller
 
 module.exports = function (app) {
 
+	//token拦截
+	app.use(routeController.tokenController);
+
 	//根
 	app.get('/', routeController.indexController);
 
-	//token拦截
-	app.use(routeController.tokenController);
+	app.get('/user', routeController.userController);
 
 	//用户管理/总代理
 	app.get('/userlist1', routeController.userlist1Controller)

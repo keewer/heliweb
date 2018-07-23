@@ -1,7 +1,7 @@
 exports.server = {
 	host: '127.0.0.1',
-	port: 8001,
-	SSLport: 8002
+	port: 5000,
+	SSLport: 5001
 }
 
 exports.cert = {
@@ -9,7 +9,7 @@ exports.cert = {
 }
 
 exports.mysqlOptions = {
-	database: 'jiulingnian',
+	database: 'helidb',
 	host: '127.0.0.1',
 	user: 'root',
 	password: 'love you',
@@ -32,5 +32,12 @@ exports.emailOptions = {
 }
 
 exports.saltOptions = {
-	salt: 'nlj'
+	salt: 'ileh'
 }
+
+exports.imgCodeOptions = {
+	size: 5,
+	ignoreChars: '0o1i',
+	noise: 3,
+	height: 50
+};

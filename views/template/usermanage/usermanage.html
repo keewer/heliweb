@@ -47,14 +47,14 @@
 					<td>{{item.username}}</td>
 					<td>{{item.phone}}</td>
 					<td>{{item.position}}</td>
-					<td>{{item.status === 1 ? '正常' : '禁用'}}</td>
+					<td>{{item.status == 1 ? '正常' : '禁用'}}</td>
 					<td>{{item.address}}</td>
 					<td>{{item.primaryRelationship}}</td>
 					<td>{{item.secondaryRelationship}}</td>
 					<td>{{item.loginCount}}</td>
 					<td>{{item.lastLoginTime}}</td>
 					<th>
-						<button class="btn btn-xs btn-success" ng-if="authority === 0 || authority === 1" ng-click="goState('home.distributor')">查看分销商</button>
+						<button class="btn btn-xs btn-success" ng-if="(authority === 0 || authority === 1) && (item.auth == 3)" ng-click="goState('home.distributor')">查看分销商</button>
 						<button class="btn btn-xs btn-warning" ng-if="item.status === 0">启用</button>
 						<button class="btn btn-xs btn-danger" ng-if="item.status === 1">禁用</button>
 					</th>

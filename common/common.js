@@ -35,6 +35,11 @@ module.exports = {
 		info: {
 			msg: '密码错误',
 			code: 1013
+		},
+
+		disabled: {
+			msg: '该用户已被禁用，无法登录',
+			code: 1014
 		}
 	},
 
