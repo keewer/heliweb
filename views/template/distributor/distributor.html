@@ -1,7 +1,10 @@
 <div class="distributor">
 		<div class="distributor-top">
 		<div class="distributor-title">用户管理/<span class="second-distributor-title">总代理/分销商</span></div>
-		<div class="distributor-operation">			
+		<div class="distributor-operation">
+			<div class="pull-left show-all-data">
+				<button class="btn btn-primary" ng-dsiabled="!isSearch">显示所有数据</button>
+			</div>	
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
@@ -11,6 +14,9 @@
 						</span>
 					</div>
 				</div>
+			</div>
+			<div class="pull-left add-btn" ng-if="authority == 3">
+				<button class="btn btn-primary" data-toggle="modal" data-target="#agent">添加分销商</button>
 			</div>
 		</div>
 	</div>
@@ -62,5 +68,118 @@
 	    <li><span>共{{pageCounts}}页</span></li>
 	  </ul>
   </div>
+
+
+  <div id="agent" class="modal fade" ng-if="authority == 3">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+	        <h4 class="modal-title">添加分销商</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form name="userForm" novalidate>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-mobile fa-lg"></i>
+	        			</span>
+	        			<input class="form-control" type="text" name="phone" autocomplete="off" placeholder="手机号" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" />
+	        		</div>
+	        		<div ng-hide="userForm.phone.$pristine">
+								<div class="alert alert-danger" ng-show="userForm.phone.$error.required">
+									<p>手机号必填</p>
+								</div>
+								<div class="alert alert-danger" ng-show="userForm.phone.$error.pattern">
+									<p>手机号格式错误</p>
+								</div>
+							</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-lock"></i>
+	        			</span>
+	        			<input class="form-control" type="password" name="pwd" autocomplete="off" placeholder="密码(6-16位)" ng-model="userInfo.pwd" ng-required="true" ng-pattern="/^\w{6,16}$/" />
+	        		</div>
+	        		<div ng-hide="userForm.pwd.$pristine">
+								<div class="alert alert-danger" ng-show="userForm.pwd.$error.required">
+									<p>密码必填</p>
+								</div>
+								<div class="alert alert-danger" ng-show="userForm.pwd.$error.pattern">
+									<p>密码格式错误，只能数字字母下划线组合6-16位</p>
+								</div>
+							</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-lock"></i>
+	        			</span>
+	        			<input class="form-control" type="password" name="repwd" autocomplete="off" placeholder="确认密码" ng-model="userInfo.repwd" />
+	        		</div>
+	        		<div ng-hide="userForm.repwd.$pristine">
+	        			<div class="alert alert-danger" ng-show="userInfo.repwd != userInfo.pwd">
+									<p>两次密码不一致</p>
+								</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-user"></i>
+	        			</span>
+	        			<input class="form-control" type="text" name="username" autocomplete="off" placeholder="真实姓名" ng-required="true" ng-model="userInfo.username" />
+	        		</div>
+	        		<div ng-hide="userForm.username.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.username.$error.required">
+									<p>姓名必填</p>
+								</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-address-card-o"></i>
+	        			</span>
+	        			<input class="form-control" type="text" name="idcard" autocomplete="off" placeholder="身份证号" ng-model="userInfo.idcard" ng-required="true" ng-pattern="/^\d{17}(\d|x)$/i" />
+	        		</div>
+	        		<div ng-hide="userForm.idcard.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.idcard.$error.required">
+	        				<p>身份证必填</p>
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.idcard.$error.pattern">
+	        				<p>身份证格式不正确</p>
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				<i class="fa fa-location-arrow"></i>
+	        			</span>
+	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/[<>]+/" ng-model="userInfo.address" ng-maxlength="30" />
+	        		</div>
+	        		<div ng-hide="userForm.address.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.address.$error.required">
+	        				收货地址必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="!userForm.address.$error.pattern">
+	        				收货地址不能含有< >符号
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">
+	        				收货地址过长，最多30个字符
+	        			</div>
+	        		</div>
+	        	</div>
+	        </form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid">确认</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 </div>

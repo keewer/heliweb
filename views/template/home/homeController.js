@@ -3,7 +3,8 @@ angular.module('app')
 		
 		$scope.loginUserInfo = {
 			username: '',
-			auth: ''
+			auth: '',
+			position: ''
 		};
 
 		var _tVc = $cookies.get('_tVc');
@@ -13,11 +14,11 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchGet('/user', {_tVc: _tVc})
 				.then(function (data) {
-					console.log('data ==> ', data);
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
 						$scope.loginUserInfo.username = data.data.username;
 						$scope.loginUserInfo.auth = data.data.auth;
+						$scope.loginUserInfo.position = data.data.position;
 					} else {
 						TIP.openDialog(data.data.msg);
 						$setTimeout(function () {
@@ -74,7 +75,7 @@ angular.module('app')
 		];
 
 		for (var i = 0; i < $scope.list.length; i++) {
-			if ($scope.list[i].url.indexOf(path) > -1) {
+			if ($scope.list[i].url.indexOf(path.split('/')[0]) > -1) {
 				$scope.list[i].licls['active-bg'] = true;
 				activeItem = $scope.list[i];
 				break;

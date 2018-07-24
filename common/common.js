@@ -59,6 +59,20 @@ module.exports = {
 			msg: '服务器报错',
 			code: 5000
 		}
+	},
+
+	add: {
+
+		success: {
+			msg: '添加成功',
+			code: 7000
+		},
+
+		fail: {
+			msg: '添加失败',
+			code: 7001
+		}
+		
 	}
 
 }

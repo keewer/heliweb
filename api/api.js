@@ -44,6 +44,11 @@ class API {
 		});
 	}
 
+	//添加数据
+	create(modelName, o) {
+		return sql.create(modelName, o);
+	}
+
 
 }
 

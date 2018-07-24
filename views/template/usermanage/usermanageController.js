@@ -54,7 +54,6 @@ angular.module('app')
 				API.fetchGet('/usercount', o)
 					.then(function (data) {
 						TIP.hideLoading();
-						console.log(data);
 						if (data.data.code == 3000) {
 							$scope.option.all = Math.ceil(data.data.count / everyPageData);
 							var query = {
@@ -128,17 +127,16 @@ angular.module('app')
 					} else {
 						item.status = data.data.status;
 					}
-					console.log('data ==> ', data);
 				})
 				.catch(function (err) {
 					TIP.hideLoading();
 					console.log('出错啦');
+					TIP.openDialog(data.data.msg);
 				})
 			}
 		}
 
 		$scope.search = function () {
-			console.log($scope.search.user);
 
 			$scope.search.user = $scope.search.user ? $scope.search.user : '';
 
@@ -166,6 +164,42 @@ angular.module('app')
 			$scope.isSearch = false;
 			$scope.search.user = '';
 			initPage();
+		}
+
+		$scope.selectDistributor = function (item) {
+			$state.go('home.distributor', {id: item.id, auth: $scope.authority});
+		}
+
+
+		$scope.addAgent = function () {
+
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc
+				};
+				for (var key in $scope.userInfo) {
+					if (key == 'repwd') {continue;}
+					o[key] = $scope.userInfo[key];
+				}
+				API.fetchPost('/adduser', o)
+					.then(function (data) {
+						$('#agent').modal('hide');
+						$('#agent input').val('');
+						TIP.hideLoading();
+						TIP.openDialog(data.data.msg);
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						console.log('出错啦');
+						TIP.openDialog(data.data.msg);
+					})
+			}
+
+			
 		}
 		
 	}])

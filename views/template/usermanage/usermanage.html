@@ -1,6 +1,6 @@
 <div class="usermanage">
 	<div class="usermanage-top">
-		<div class="usermanage-title">用户管理/<span class="second-usermanage-title">总代理</span></div>
+		<div class="usermanage-title">用户管理</div>
 		<div class="usermanage-operation pull-right">
 			<div class="pull-left show-all-data">
 				<button ng-disabled="!isSearch" class="btn btn-primary" ng-click="showAllData()">显示所有数据</button>
@@ -55,7 +55,7 @@
 					<td>{{item.loginCount}}</td>
 					<td>{{item.lastLoginTime}}</td>
 					<th>
-						<button class="btn btn-xs btn-success" ng-if="(authority == 0 || authority == 1) && (item.auth == 3)" ng-click="goState('home.distributor')">查看分销商</button>
+						<button class="btn btn-xs btn-success" ng-if="(authority == 0 || authority == 1) && (item.auth == 3)" ng-click="selectDistributor(item)">查看分销商</button>
 						<button class="btn btn-xs btn-warning" ng-if="item.status == 0" ng-click="changeStatus(item)">启用</button>
 						<button class="btn btn-xs btn-danger" ng-if="item.status == 1" ng-click="changeStatus(item)">禁用</button>
 					</th>
@@ -68,12 +68,12 @@
 
   </div>
 
-  <div id="agent" class="modal fade" ng-if="authority === 1 || authority === 3">
+  <div id="agent" class="modal fade" ng-if="authority === 1">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-	        <h4 class="modal-title">{{authority === 1 ? '添加总代理' : '添加分销商'}}</h4>
+	        <h4 class="modal-title">添加总代理</h4>
 	      </div>
 	      <div class="modal-body">
 	        <form name="userForm" novalidate>
@@ -156,14 +156,14 @@
 	        			<span class="input-group-addon">
 	        				<i class="fa fa-location-arrow"></i>
 	        			</span>
-	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/[<>]+/" ng-model="userInfo.address" ng-maxlength="30" />
+	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" />
 	        		</div>
 	        		<div ng-hide="userForm.address.$pristine">
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.required">
 	        				收货地址必填
 	        			</div>
-	        			<div class="alert alert-danger" ng-show="!userForm.address.$error.pattern">
-	        				收货地址不能含有< >符号
+	        			<div class="alert alert-danger" ng-show="userForm.address.$error.pattern">
+	        				收货地址不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">
 	        				收货地址过长，最多30个字符
@@ -174,7 +174,8 @@
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid">确认</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid" ng-click="addAgent()">确认</button>
+
 	      </div>
 	    </div>
 	  </div>

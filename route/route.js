@@ -20,7 +20,7 @@ module.exports = function (app) {
 	//切换用户状态, 正常和禁用
 	app.post('/changeuserstatus', routeController.changeUserStatusController);
 
-	app.get('/searchuser', routeController.searchUserController);
+	app.post('/adduser', routeController.addUserController);
 
 	//用户管理/总代理
 	app.get('/userlist1', routeController.userlist1Controller);

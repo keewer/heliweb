@@ -29,13 +29,11 @@
 }
 
 .distributor .add-btn{
-	margin-top: 8px;
 	margin-left: 50px;
 	margin-right: 50px;
 }
 
 .distributor .search{
-	margin-top: 8px;
 	width: 200px;
 }
 
@@ -47,4 +45,8 @@
 .distributor .searching:hover{
 	background-color: #337AB7;
 	color: #efefef;
+}
+
+.distributor .show-all-data{
+	margin-right: 15px;
 }

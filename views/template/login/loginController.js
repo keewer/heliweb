@@ -42,7 +42,6 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchPost('/login', o)
 				.then(function (data) {
-					console.log('data ==> ', data);
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
 						var time = new Date().getTime() + 86400000;
@@ -50,7 +49,12 @@ angular.module('app')
 						$cookies.put('_tVc', data.data._tVc, {expires: time});
 
 						var stateName = data.data.auth == 0 || data.data.auth == 1 ? 'home.usermanage' : 'home.distributor';
-						$state.go(stateName);
+						if (data.data.auth == 3) {
+							$state.go(stateName, {id: data.data.id, auth: data.data.auth});
+						} else {
+							$state.go(stateName);
+						}
+						
 					} else{
 						TIP.openDialog(data.data.msg);
 					}

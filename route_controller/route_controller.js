@@ -145,7 +145,7 @@ class RouteController {
 
 	//查询当前用户信息
 	userController(req, res) {
-		api.findOne('User', ['username', 'auth', 'status'], {phone: req.phone})
+		api.findOne('User', ['username', 'auth', 'status', 'position'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -196,9 +196,10 @@ class RouteController {
 		
 	}
 
-	//通过用户名搜索用户, 只能搜索查询者以下权限的用户
-	searchUserController(req, res) {
-		api.findOne('User', ['auth', 'status'], {phone: req.phone})
+	//添加用户
+	addUserController(req, res) {
+
+		api.findOne('User', ['id', 'auth', 'status', 'primaryRelationship'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -206,15 +207,50 @@ class RouteController {
 						res.json(common.auth.fail);
 					} else {
 
-						res.json({msg: '查询成功', code: 3000, data: result.dataValues});
+						let ro = {};
+
+						for (let key in req.body) {
+							ro[key] = req.body[key];
+						}
+
+						if (result.dataValues.auth == 1) {
+							//营销总监
+							ro.primaryRelationship = 0;
+							ro.secondaryRelationship = 0;
+							ro.auth = 3;
+							ro.position = '总代理';
+						} else if (result.dataValues.auth == 3) {
+							//总代理
+							ro.primaryRelationship = Number(result.dataValues.id);
+							ro.secondaryRelationship = Number(result.dataValues.primaryRelationship);
+							ro.auth = 4;
+							ro.position = '分销商';
+						}
+
+						api.create('User', ro)
+							.then(result => {
+								if (result) {
+									res.json(common.add.success);
+								} else {
+									res.json(common.add.fail);
+								}
+							})
+							.catch(err => {
+								console.log('addUserController出错了');
+								res.json(common.server.error);
+							})
+
+
 					}
-				} else {
+				}	else {
 					res.json(common.auth.fail);
 				}
 			})
 			.catch(err => {
-				console.log('searchUserController出错了');
+				console.log('addUserController出错了');
+				res.json(common.server.error);
 			})
+
 	}
 
 
@@ -265,6 +301,7 @@ class RouteController {
 				}
 			})
 			.catch(err => {
+				console.log('userlist1Controller出错了');
 				res.json(common.server.error);
 			})
 	}
@@ -318,7 +355,7 @@ class RouteController {
 
 	loginController(req, res) {
 		console.log(req.body);
-		api.login('User', ['username','phone', 'pwd', 'auth', 'status', 'loginCount'], {phone: req.body.phone})
+		api.login('User', ['id', 'username', 'phone', 'pwd', 'auth', 'status', 'loginCount'], {phone: req.body.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 
@@ -334,6 +371,7 @@ class RouteController {
 						common.login.sucesss.auth = result.dataValues.auth;
 						common.login.sucesss.status = result.dataValues.status;
 						common.login.sucesss.username = result.dataValues.username;
+						common.login.sucesss.id = result.dataValues.id;
 
 						//更新登录次数和最后登录时间
 						let lastLoginTime = utils.formatDate(new Date());
