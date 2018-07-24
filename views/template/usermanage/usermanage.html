@@ -2,13 +2,14 @@
 	<div class="usermanage-top">
 		<div class="usermanage-title">用户管理/<span class="second-usermanage-title">总代理</span></div>
 		<div class="usermanage-operation pull-right">
-			
-			
+			<div class="pull-left show-all-data">
+				<button ng-disabled="!isSearch" class="btn btn-primary" ng-click="showAllData()">显示所有数据</button>
+			</div>
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
-						<input class="form-control" type="text" name="search" placeholder="搜索总代理..." />
-						<span class="input-group-addon searching">
+						<input class="form-control" type="text" name="search" placeholder="输入总代理姓名..." ng-model="search.user" />
+						<span ng-click="search()" class="input-group-addon searching">
 							<i class="fa fa-search"></i>
 						</span>
 					</div>
@@ -54,9 +55,9 @@
 					<td>{{item.loginCount}}</td>
 					<td>{{item.lastLoginTime}}</td>
 					<th>
-						<button class="btn btn-xs btn-success" ng-if="(authority === 0 || authority === 1) && (item.auth == 3)" ng-click="goState('home.distributor')">查看分销商</button>
-						<button class="btn btn-xs btn-warning" ng-if="item.status === 0">启用</button>
-						<button class="btn btn-xs btn-danger" ng-if="item.status === 1">禁用</button>
+						<button class="btn btn-xs btn-success" ng-if="(authority == 0 || authority == 1) && (item.auth == 3)" ng-click="goState('home.distributor')">查看分销商</button>
+						<button class="btn btn-xs btn-warning" ng-if="item.status == 0" ng-click="changeStatus(item)">启用</button>
+						<button class="btn btn-xs btn-danger" ng-if="item.status == 1" ng-click="changeStatus(item)">禁用</button>
 					</th>
 				</tr>
 			</tbody>

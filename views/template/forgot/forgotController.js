@@ -1,5 +1,5 @@
 angular.module('app')
-	.controller('forgotController', ['$scope', function ($scope) {
+	.controller('forgotController', ['$scope', 'API', function ($scope, API) {
 		$scope.userInfo = {
 			phone: '',
 			pwd: '',
@@ -8,4 +8,5 @@ angular.module('app')
 		};
 
 		$scope.codeText = '10000';
+
 	}])

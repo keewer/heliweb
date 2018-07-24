@@ -41,3 +41,9 @@ exports.imgCodeOptions = {
 	noise: 3,
 	height: 50
 };
+
+exports.ignoreUrls = [
+	'/',
+	'/imgcode',
+	'/login'
+];

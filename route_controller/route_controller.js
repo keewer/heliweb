@@ -11,7 +11,7 @@ class RouteController {
 	//token拦截
 	tokenController(req, res, next) {
 
-		if (req.url == '/' || req.url == '/imgcode' || req.url == '/login') {
+		if (config.ignoreUrls.includes(req.url)) {
 			return next();
 		}
 		var token = req.body._tVc || req.query._tVc;
@@ -23,7 +23,7 @@ class RouteController {
 				if (err) {
 					res.json(common.auth.fail);
 				} else {
-					console.log(decode);
+					console.log('decode.name ==> ', decode.name);
 					req.phone = decode.name;
 					next();
 				}
@@ -37,6 +37,113 @@ class RouteController {
 		res.status(200).render('index');
 	}
 
+	//查询次于查询者权限以下用户数量
+	userCountController(req, res) {
+		api.findOne('User', ['phone', 'auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						var o = {};
+						var auth = result.dataValues.auth;
+						if (auth == 0) {
+							o.auth = {
+								$in: [1,2,3]
+							}
+						} else if (auth == 1) {
+							o.auth = {
+								$in: [2,3]
+							}
+						}
+						if (req.query.username) {
+							o.username = req.query.username;
+						}
+						console.log('o ==> ', o);
+						api.count('User', o)
+							.then(result => {
+								res.json({msg: '查询成功', code: 3000, auth: auth, count: result});
+							})
+							.catch(err => {
+								console.log('userCountController出错啦');
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询次于查询者权限以下最新用户
+	lastUserController(req, res) {
+		api.findOne('User', ['phone', 'auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						var o = {};
+						var auth = result.dataValues.auth;
+						if (auth == 0) {
+							o.auth = {
+								$in: [1,2,3]
+							}
+						} else if (auth == 1) {
+							o.auth = {
+								$in: [2,3]
+							}
+						}
+						var attrs = [
+							'id',
+							'username',
+							'phone',
+							'auth',
+							'lastLoginTime',
+							'loginCount',
+							'address',
+							'status',
+							'position',
+							'primaryRelationship',
+							'secondaryRelationship'
+						];
+
+						if (req.query.username) {
+							o.username = req.query.username;
+						}
+						api.findAll('User', attrs, o, Number(req.query.offset), Number(req.query.limit), [['id', 'DESC']])
+							.then(result => {
+								if (result && Array.isArray(result)) {
+									let data = [];
+									result.forEach(v => {
+										data.push(v);
+									})
+									res.json({msg: '查询成功', code: 3000, auth, data});
+								} else {
+									res.json({msg: '没有数据', code: 3001, auth: auth});
+								}
+								
+							})
+							.catch(err => {
+								console.log('userCountController出错啦');
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询当前用户信息
 	userController(req, res) {
 		api.findOne('User', ['username', 'auth', 'status'], {phone: req.phone})
 			.then(result => {
@@ -55,6 +162,61 @@ class RouteController {
 				res.json(common.server.error);
 			})
 	}
+
+	//禁用用户
+	changeUserStatusController(req, res) {
+		api.findOne('User', ['status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						api.update('User', {
+							status: Number(req.body.status)
+						}, {id: Number(req.body.id), phone: req.body.phone})
+						.then(result => {
+							console.log(result);
+							res.json({msg: '更新成功', code: 6000, status: req.body.status});
+						})
+						.catch(err => {
+							console.log('changeUserStatusController出错了');
+							res.json(common.server.error);
+						})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+				
+			})
+			.catch(err => {
+				console.log('changeUserStatusController出错了');
+				res.json(common.server.error);
+			})
+		
+	}
+
+	//通过用户名搜索用户, 只能搜索查询者以下权限的用户
+	searchUserController(req, res) {
+		api.findOne('User', ['auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+
+						res.json({msg: '查询成功', code: 3000, data: result.dataValues});
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				console.log('searchUserController出错了');
+			})
+	}
+
 
 	//用户管理/总代理
 	userlist1Controller(req, res) {
@@ -167,7 +329,7 @@ class RouteController {
 
 					let pwd = utils.addCrypto(req.body.pwd);
 					if (pwd === result.dataValues.pwd) {
-						let token = utils.generateToken(req.body.phone);
+						let token = utils.generateToken(result.dataValues.phone);
 						common.login.sucesss._tVc = token;
 						common.login.sucesss.auth = result.dataValues.auth;
 						common.login.sucesss.status = result.dataValues.status;

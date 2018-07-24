@@ -1,5 +1,5 @@
 angular.module('app')
-	.controller('usermanageController', ['$scope', '$state', '$cookies', '$compile', 'API', 'TIP', function ($scope, $state, $cookies, $compile, API, TIP) {
+	.controller('usermanageController', ['$scope', '$state', '$cookies', '$compile', '$timeout', 'API', 'TIP', function ($scope, $state, $cookies, $compile, $timeout, API, TIP) {
 
 		$scope.userInfo = {
 			phone: '',
@@ -10,11 +10,20 @@ angular.module('app')
 			address: ''
 		};
 
+		$scope.search = {
+			user: ''
+		}
+
+		$scope.isSearch = false;
+
 		$scope.pageDataList = [];
 
 		$scope.authority = -1;
 
 		var isInit = true;
+
+		//每一页显示数据数量
+		var everyPageData = 10;
 
 		//设置分页的参数
 	  $scope.option = {
@@ -25,50 +34,138 @@ angular.module('app')
 	    //点击页数的回调函数，参数page为点击的页数
 	    click: function (page) {
 	      $scope.option.curr = page;
-	      initPagination();
+	      initPage();
 	    }
 	  };
 
-		function initPagination() {
-			var _tVc = $cookies.get('_tVc');
-				if (!_tVc) {
-					$state.go('login');
-				} else {
-					TIP.openLoading($scope);
-					API.fetchGet('/userlist1', {_tVc: _tVc, offset: ($scope.option.curr - 1) * $scope.option.count, limit: $scope.option.count})
-						.then(function (data) {
-							console.log('data ==> ', data);
-							TIP.hideLoading();
-							if (data.data.code == 3000) {
-								data.data.data.forEach(function (v, i) {
-									v.num = i + ($scope.option.curr - 1) * $scope.option.count;
-									v.lastLoginTime = new Date(v.lastLoginTime).formatDate('yyyy-MM-dd hh:mm:ss');
-								})
-								$scope.pageDataList = data.data.data;
-								$scope.authority = data.data.auth;
-								$scope.option.all = Math.ceil(data.data.count / $scope.option.count);
-								
-								if (isInit){
-									var pagination = $compile('<pagination page-option="option"></pagination>')($scope)[0];
 
-									document.getElementById('pagination').appendChild(pagination);
-
-									isInit = false;
-								}
-								
-								
-							} else {
-								TIP.openDialog(data.data.msg);
-							}
-							
-						})
-						.catch(function (err) {
-							TIP.hideLoading();
-							console.log('错误啦');
-						})
+	  function initPage(username) {
+		  var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc
+				};
+				if (username) {
+					o.username = username;
 				}
+				API.fetchGet('/usercount', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						console.log(data);
+						if (data.data.code == 3000) {
+							$scope.option.all = Math.ceil(data.data.count / everyPageData);
+							var query = {
+								_tVc: _tVc,
+								offset: ($scope.option.curr - 1) * everyPageData, 
+								limit: everyPageData
+							};
+
+							if (username) {
+								query.username = username;
+							}
+							API.fetchGet('/lastuser', query)
+							.then(function (data) {
+								if (data.data.code == 3000) {
+									data.data.data.forEach(function (v, i) {
+										v.num = i + ($scope.option.curr - 1) * everyPageData;
+										v.lastLoginTime = new Date(v.lastLoginTime).formatDate('yyyy-MM-dd hh:mm:ss');
+									})
+									$scope.pageDataList = data.data.data;
+									$scope.authority = data.data.auth;
+									if (isInit){
+										var pagination = $compile('<pagination page-option="option"></pagination>')($scope)[0];
+
+										document.getElementById('pagination').appendChild(pagination);
+
+										isInit = false;
+									}
+								} else {
+									TIP.openDialog(data.data.msg);
+								}
+							})
+							.catch(function (err) {
+								console.log('出错啦');
+							})
+
+						} else if (data.data.code == 4001) {
+							$state.go('login');
+						}
+					})
+					.catch(function (err) {
+						console.log('出错啦');
+						TIP.hideLoading();
+					})
+			}
 		}
 
-		initPagination();
+		initPage();
+
+		$scope.changeStatus = function (item) {
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				API.fetchPost('/changeuserstatus', {
+					id: item.id,
+					phone: item.phone,
+					status: item.status == 0 ? 1 : 0,
+					_tVc: _tVc
+				})
+				.then(function (data) {
+					TIP.hideLoading();
+
+					if (data.data.code == 4001) {
+						TIP.openDialog(data.data.msg);
+						$timeout(function () {
+							$state.go('login');
+						}, 2000);
+					} else if (data.data.code == 5000) {
+						TIP.openDialog(data.data.msg);
+					} else {
+						item.status = data.data.status;
+					}
+					console.log('data ==> ', data);
+				})
+				.catch(function (err) {
+					TIP.hideLoading();
+					console.log('出错啦');
+				})
+			}
+		}
+
+		$scope.search = function () {
+			console.log($scope.search.user);
+
+			$scope.search.user = $scope.search.user ? $scope.search.user : '';
+
+			if (!$scope.search.user.trim()) {
+				console.log('空');
+				return;
+			} else if (/[<>]+/.test($scope.search.user)) {
+				TIP.openDialog('搜索用户不能含有< >符号');
+			} else {
+				$scope.option.curr = 1;
+				document.getElementById('pagination').innerHTML = '';
+				isInit = true;
+				$scope.isSearch = true;
+				initPage($scope.search.user);
+			}
+			
+			
+
+		}
+
+		$scope.showAllData = function () {
+			$scope.option.curr = 1;
+			document.getElementById('pagination').innerHTML = '';
+			isInit = true;
+			$scope.isSearch = false;
+			$scope.search.user = '';
+			initPage();
+		}
 		
 	}])

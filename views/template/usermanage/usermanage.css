@@ -31,3 +31,17 @@
 .usermanage .second-usermanage-title{
 	font-size: 18px
 }
+
+.usermanage .show-all-data{
+	margin-right: 15px;
+}
+
+.usermanage .searching{
+	cursor: pointer;
+	transition: background-color .3s;
+}
+
+.usermanage .searching:hover{
+	background-color: #337AB7;
+	color: #efefef;
+}
