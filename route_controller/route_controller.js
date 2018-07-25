@@ -4,6 +4,8 @@ const api = require(__basename + '/api/api.js');
 
 const common = require(__basename + '/common/common.js');
 
+console.log(utils.addCrypto('123456'));
+
 class RouteController {
 
 	constructor() {}
@@ -138,6 +140,8 @@ class RouteController {
 							'address',
 							'status',
 							'position',
+							'rp',
+							'sp',
 							'primaryRelationship',
 							'secondaryRelationship'
 						];
@@ -202,6 +206,8 @@ class RouteController {
 							'address',
 							'status',
 							'position',
+							'rp',
+							'sp',
 							'primaryRelationship',
 							'secondaryRelationship'
 						];
@@ -348,59 +354,6 @@ class RouteController {
 
 	}
 
-
-	//用户管理/总代理
-	userlist1Controller(req, res) {
-		api.findOne('User', ['phone', 'auth', 'status'], {phone: req.phone})
-			.then(result => {
-				if (result && result.dataValues) {
-					if (result.dataValues.status == 0) {
-						//禁用
-						res.json(common.auth.fail);
-					} else {
-						var o = {};
-						var auth = result.dataValues.auth;
-						if (auth == 0) {
-							o.auth = {
-								$in: [1,2,3]
-							}
-						} else if (auth == 1) {
-							o.auth = {
-								$in: [2,3]
-							}
-						}
-						var attrs = [
-							'id',
-							'username',
-							'phone',
-							'auth',
-							'lastLoginTime',
-							'loginCount',
-							'address',
-							'status',
-							'position',
-							'primaryRelationship',
-							'secondaryRelationship'
-						];
-						api.findAndCountAll('User', attrs, o, Number(req.query.offset), Number(req.query.limit))
-							.then(result => {
-								res.json({count: result.count, data: result.rows, msg: '查询成功', code: 3000, auth: auth});
-							})
-							.catch(err => {
-								console.log('userlist1Controller出错啦');
-								res.json(common.server.error);
-							})
-					}
-				} else {
-					res.json(common.auth.fail);
-				}
-			})
-			.catch(err => {
-				console.log('userlist1Controller出错了');
-				res.json(common.server.error);
-			})
-	}
-
 	getValidCodeController(req, res) {
 
 		let validCode = utils.generateValidCode();
@@ -421,26 +374,6 @@ class RouteController {
 				res.json({msg: `验证码已发至${req.body.email}邮箱`, validCode});
 			}
 		})
-	}
-
-	registerController(req, res) {
-
-		req.body.pwd = utils.addCrypto(req.body.pwd);
-
-		api.register(req.body)
-			.then(result => {
-				res.json(common.register.sucesss);
-			})
-			.catch(err => {
-				if (err.name === 'SequelizeUniqueConstraintError') {
-					res.json(common.register.warning);
-				} else {
-					res.json(common.register.fail);
-				}
-				
-			})
-
-		
 	}
 
 	getImgCodeController(req, res) {
@@ -502,32 +435,6 @@ class RouteController {
 				console.log('loginController出错了');
 				res.json(common.login.fail);
 			})
-	}
-
-
-	navController(req, res) {
-		console.log(req.body);
-
-		//验证token合法性
-		utils.verifyToken(req.body._tVc, function (err, decoded) {
-			if (!err) {
-				api.login('User', ['email', 'auth', 'vip'], {email: decoded.name})
-					.then(result => {
-						if (result && result.dataValues) {
-							result.dataValues.isLogin = true;
-							res.json(result.dataValues);
-						}
-					})
-					.catch(err => {
-						res.json({isLogin: false});
-					})
-
-			} else {
-				res.json({isLogin: false});
-			}
-		})
-
-		
 	}
 
 }

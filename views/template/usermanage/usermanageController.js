@@ -68,6 +68,7 @@ angular.module('app')
 							}
 							API.fetchGet('/lastuser', query)
 							.then(function (data) {
+								console.log('users data ==> ', data);
 								if (data.data.code == 3000) {
 									data.data.data.forEach(function (v, i) {
 										v.num = i + ($scope.option.curr - 1) * everyPageData;

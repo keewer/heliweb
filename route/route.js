@@ -25,20 +25,14 @@ module.exports = function (app) {
 	//查询当前总代理名下的分销商数量
 	app.get('/distributorconut', routeController.distributorConutController);
 
-	//
+	//查询当前总代理名下的分销商
 	app.get('/selectdistributorofagent', routeController.selectDistributorOfAgentConutController);
 
-	//用户管理/总代理
-	app.get('/userlist1', routeController.userlist1Controller);
-
 	app.post('/validcode', routeController.getValidCodeController);
-
-	app.post('/register', routeController.registerController);
 
 	app.get('/imgcode', routeController.getImgCodeController);
 
 	app.post('/login', routeController.loginController);
 
-	app.post('/nav', routeController.navController);
 
 }
