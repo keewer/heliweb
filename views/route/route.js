@@ -46,7 +46,7 @@ angular.module('app')
 				}
 			})
 			.state('home.distributor', {
-				url: '/distributor/:id/:auth',
+				url: '/distributor/:id',
 				templateUrl: 'template/distributor/distributor.html',
 				controller: 'distributorController',
 				resolve: {

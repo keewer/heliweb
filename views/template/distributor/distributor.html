@@ -3,13 +3,13 @@
 		<div class="distributor-title">用户管理/<span class="second-distributor-title">总代理/分销商</span></div>
 		<div class="distributor-operation">
 			<div class="pull-left show-all-data">
-				<button class="btn btn-primary" ng-dsiabled="!isSearch">显示所有数据</button>
+				<button class="btn btn-primary" ng-disabled="!isSearch" ng-click="showAllData()">显示所有数据</button>
 			</div>	
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
-						<input class="form-control" type="text" name="search" placeholder="输入分销商姓名..." />
-						<span class="input-group-addon searching">
+						<input class="form-control" type="text" name="search" placeholder="输入分销商姓名..." ng-model="search.user" />
+						<span class="input-group-addon searching" ng-click="search()">
 							<i class="fa fa-search"></i>
 						</span>
 					</div>
@@ -41,7 +41,7 @@
 			<tbody>
 				<tr ng-repeat="item in pageDataList track by $index">
 					<td>{{item.num + 1}}</td>
-					<td>{{item.name}}</td>
+					<td>{{item.username}}</td>
 					<td>{{item.phone}}</td>
 					<td>{{item.position}}</td>
 					<td>{{item.status === 1 ? '正常' : '禁用'}}</td>
@@ -51,22 +51,17 @@
 					<td>{{item.loginCount}}</td>
 					<td>{{item.lastLoginTime}}</td>
 					<th>
-						<button class="btn btn-xs btn-success" ng-if="authority === 0 || authority === 1" ng-click="goState('home.distributor')">查看分销商</button>
-						<button class="btn btn-xs btn-warning" ng-if="item.status === 0">启用</button>
-						<button class="btn btn-xs btn-danger" ng-if="item.status === 1">禁用</button>
+						<button class="btn btn-xs btn-warning" ng-if="item.status == 0 && authority == 3" ng-click="changeStatus(item)">启用</button>
+						<button class="btn btn-xs btn-danger" ng-if="item.status == 1 && authority == 3" ng-click="changeStatus(item)">禁用</button>
+						<button class="btn btn-xs btn-default" ng-if="authority != 3" ng-disabled="true">无权限</button>
 					</th>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 
-	<div class="distributor-pagination">
-		<ul class="pagination">
-	    <li ng-click="previousPage()"><span>上一页</span></li>
-	    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
-	    <li ng-click="nextPage()"><span>下一页</span></li>
-	    <li><span>共{{pageCounts}}页</span></li>
-	  </ul>
+	<div id="pagination" class="distributor-pagination">
+
   </div>
 
 
@@ -158,14 +153,14 @@
 	        			<span class="input-group-addon">
 	        				<i class="fa fa-location-arrow"></i>
 	        			</span>
-	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/[<>]+/" ng-model="userInfo.address" ng-maxlength="30" />
+	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" />
 	        		</div>
 	        		<div ng-hide="userForm.address.$pristine">
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.required">
 	        				收货地址必填
 	        			</div>
-	        			<div class="alert alert-danger" ng-show="!userForm.address.$error.pattern">
-	        				收货地址不能含有< >符号
+	        			<div class="alert alert-danger" ng-show="userForm.address.$error.pattern">
+	        				收货地址不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">
 	        				收货地址过长，最多30个字符
@@ -176,7 +171,7 @@
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid">确认</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid" ng-click="addDistributor()">确认</button>
 	      </div>
 	    </div>
 	  </div>

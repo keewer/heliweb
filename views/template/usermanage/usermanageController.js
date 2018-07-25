@@ -54,6 +54,7 @@ angular.module('app')
 				API.fetchGet('/usercount', o)
 					.then(function (data) {
 						TIP.hideLoading();
+
 						if (data.data.code == 3000) {
 							$scope.option.all = Math.ceil(data.data.count / everyPageData);
 							var query = {
@@ -167,7 +168,7 @@ angular.module('app')
 		}
 
 		$scope.selectDistributor = function (item) {
-			$state.go('home.distributor', {id: item.id, auth: $scope.authority});
+			$state.go('home.distributor', {id: item.id});
 		}
 
 

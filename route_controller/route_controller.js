@@ -60,10 +60,103 @@ class RouteController {
 						if (req.query.username) {
 							o.username = req.query.username;
 						}
-						console.log('o ==> ', o);
+
 						api.count('User', o)
 							.then(result => {
 								res.json({msg: '查询成功', code: 3000, auth: auth, count: result});
+							})
+							.catch(err => {
+								console.log('userCountController出错啦');
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询分销商
+	distributorConutController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						let o = {
+							auth: 4,
+							primaryRelationship: req.query.id
+						};
+
+						api.count('User', o)
+							.then(result => {
+								res.json({msg: '查询成功', code: 3000, id: req.query.id, auth: auth, count: result});
+							})
+							.catch(err => {
+								console.log('distributorConutController出错啦');
+								res.json(common.server.error);
+							})
+
+					}
+				}	else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询总代理名下分销商
+	selectDistributorOfAgentConutController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						let o = {
+							auth: 4,
+							primaryRelationship: req.query.id
+						};
+						
+						let attrs = [
+							'id',
+							'username',
+							'phone',
+							'auth',
+							'lastLoginTime',
+							'loginCount',
+							'address',
+							'status',
+							'position',
+							'primaryRelationship',
+							'secondaryRelationship'
+						];
+
+						if (req.query.username) {
+							o.username = req.query.username;
+						}
+						api.findAll('User', attrs, o, Number(req.query.offset), Number(req.query.limit), [['id', 'DESC']])
+							.then(result => {
+								if (result && Array.isArray(result)) {
+									let data = [];
+									result.forEach(v => {
+										data.push(v);
+									})
+									res.json({msg: '查询成功', code: 3000, id: req.query.id, auth: auth, data});
+								} else {
+									res.json({msg: '没有数据', code: 3001});
+								}
+								
 							})
 							.catch(err => {
 								console.log('userCountController出错啦');
@@ -206,6 +299,8 @@ class RouteController {
 						//禁用
 						res.json(common.auth.fail);
 					} else {
+
+						req.body.pwd = utils.addCrypto(req.body.pwd);
 
 						let ro = {};
 

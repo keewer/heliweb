@@ -50,9 +50,9 @@ angular.module('app')
 
 						var stateName = data.data.auth == 0 || data.data.auth == 1 ? 'home.usermanage' : 'home.distributor';
 						if (data.data.auth == 3) {
-							$state.go(stateName, {id: data.data.id, auth: data.data.auth});
+							$state.go(stateName, {id: data.data.id});
 						} else {
-							$state.go(stateName);
+							$state.go(stateName, {id: data.data.id, auth: data.data.auth});
 						}
 						
 					} else{
