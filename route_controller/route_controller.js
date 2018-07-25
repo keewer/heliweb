@@ -117,7 +117,7 @@ class RouteController {
 
 	//查询总代理名下分销商
 	selectDistributorOfAgentConutController(req, res) {
-		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+		api.findOne('User', ['id', 'status', 'auth'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -125,6 +125,7 @@ class RouteController {
 						res.json(common.auth.fail);
 					} else {
 						let auth = result.dataValues.auth;
+						let id = result.dataValues.id;
 						let o = {
 							auth: 4,
 							primaryRelationship: req.query.id
@@ -156,7 +157,7 @@ class RouteController {
 									result.forEach(v => {
 										data.push(v);
 									})
-									res.json({msg: '查询成功', code: 3000, id: req.query.id, auth: auth, data});
+									res.json({msg: '查询成功', code: 3000, id, auth, data});
 								} else {
 									res.json({msg: '没有数据', code: 3001});
 								}

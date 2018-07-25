@@ -53,9 +53,11 @@ angular.module('app')
 				}
 				API.fetchGet('/distributorconut', o)
 					.then(function (data) {
+
 						TIP.hideLoading();
 						
 						if (data.data.code == 3000) {
+							
 							$scope.option.all = Math.ceil(data.data.count / everyPageData);
 							var query = {
 								_tVc: _tVc,
@@ -70,7 +72,11 @@ angular.module('app')
 							}
 							API.fetchGet('/selectdistributorofagent', query)
 							.then(function (data) {
+
 								if (data.data.code == 3000) {
+									if ((data.data.auth == 3 && $stateParams.id != data.data.id) || data.data.auth == 2) {
+										return $state.go('login');
+									}
 									data.data.data.forEach(function (v, i) {
 										v.num = i + ($scope.option.curr - 1) * everyPageData;
 										v.lastLoginTime = new Date(v.lastLoginTime).formatDate('yyyy-MM-dd hh:mm:ss');

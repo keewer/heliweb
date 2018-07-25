@@ -42,7 +42,7 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchPost('/login', o)
 				.then(function (data) {
-					console.log('data login ==> ', data);
+
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
 						var time = new Date().getTime() + 86400000;

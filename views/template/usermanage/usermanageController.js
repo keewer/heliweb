@@ -56,6 +56,9 @@ angular.module('app')
 						TIP.hideLoading();
 
 						if (data.data.code == 3000) {
+							if (data.data.auth == 3 || data.data.auth == 2) {
+								return $state.go('login');
+							}
 							$scope.option.all = Math.ceil(data.data.count / everyPageData);
 							var query = {
 								_tVc: _tVc,
