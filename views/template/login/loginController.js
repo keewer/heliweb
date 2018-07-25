@@ -42,17 +42,19 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchPost('/login', o)
 				.then(function (data) {
+					console.log('data login ==> ', data);
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
 						var time = new Date().getTime() + 86400000;
 						time = new Date(time);
 						$cookies.put('_tVc', data.data._tVc, {expires: time});
 
-						var stateName = data.data.auth == 0 || data.data.auth == 1 ? 'home.usermanage' : 'home.distributor';
-						if (data.data.auth == 3) {
-							$state.go(stateName, {id: data.data.id});
-						} else {
-							$state.go(stateName, {id: data.data.id, auth: data.data.auth});
+						if (data.data.auth == 0 || data.data.auth == 1) {
+							$state.go('home.usermanage');
+						} else if (data.data.auth == 2) {
+							$state.go('home.order');
+						} else if (data.data.auth == 3) {
+							$state.go('home.distributor', {id: data.data.id});
 						}
 						
 					} else{

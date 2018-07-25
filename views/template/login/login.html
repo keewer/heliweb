@@ -47,7 +47,7 @@
 					
 				</div>
 				<div ng-hide="userForm.code.$pristine">
-					<div class="alert alert-danger" ng-show="userInfo.code != code.text">
+					<div class="alert alert-danger" ng-show="(userInfo.code | lowercase) != code.text">
 						<p>验证码错误</p>
 					</div>
 				</div>

@@ -244,7 +244,7 @@ class RouteController {
 
 	//查询当前用户信息
 	userController(req, res) {
-		api.findOne('User', ['username', 'auth', 'status', 'position'], {phone: req.phone})
+		api.findOne('User', ['id', 'username', 'auth', 'status', 'position'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -298,7 +298,7 @@ class RouteController {
 	//添加用户
 	addUserController(req, res) {
 
-		api.findOne('User', ['id', 'auth', 'status', 'primaryRelationship'], {phone: req.phone})
+		api.findOne('User', ['username', 'id', 'auth', 'status', 'primaryRelationship', 'rp'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -324,6 +324,8 @@ class RouteController {
 							//总代理
 							ro.primaryRelationship = Number(result.dataValues.id);
 							ro.secondaryRelationship = Number(result.dataValues.primaryRelationship);
+							ro.rp = result.dataValues.username;
+							ro.sp = result.dataValues.rp;
 							ro.auth = 4;
 							ro.position = '分销商';
 						}

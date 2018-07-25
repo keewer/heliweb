@@ -1,7 +1,7 @@
 angular.module('app')
 	.controller('distributorController', ['$scope', '$stateParams', '$state', '$cookies', '$compile', '$timeout', 'API', 'TIP', function ($scope, $stateParams, $state, $cookies, $compile, $timeout, API, TIP) {
 
-		$scope.authority = $stateParams.auth;
+		$scope.authority = -1;
 
 		$scope.userInfo = {
 			phone: '',

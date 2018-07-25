@@ -4,39 +4,12 @@ angular.module('app')
 		$scope.loginUserInfo = {
 			username: '',
 			auth: '',
-			position: ''
+			position: '',
+			id: ''
 		};
 
-		var _tVc = $cookies.get('_tVc');
-		if (!_tVc) {
-			$state.go('login');
-		} else {
-			TIP.openLoading($scope);
-			API.fetchGet('/user', {_tVc: _tVc})
-				.then(function (data) {
-					TIP.hideLoading();
-					if (data.data.code == 1010) {
-						$scope.loginUserInfo.username = data.data.username;
-						$scope.loginUserInfo.auth = data.data.auth;
-						$scope.loginUserInfo.position = data.data.position;
-					} else {
-						TIP.openDialog(data.data.msg);
-						$setTimeout(function () {
-							$state.go('login');
-						}, 2000);
-					}
-				})
-				.catch(function (err) {
-					TIP.hideLoading();
-					console.log('出错啦');
-				})
-		}
-
-		var path = $location.path().slice(1);
-
-		var activeItem = null;
-
-		$scope.list = [
+		function gernerateList() {
+			return [
 			{
 				name: '用户管理',
 				iconcls: 'fa-users',
@@ -72,15 +45,62 @@ angular.module('app')
 				state: 'home.person',
 				url: 'person'
 			}
-		];
-
-		for (var i = 0; i < $scope.list.length; i++) {
-			if ($scope.list[i].url.indexOf(path.split('/')[0]) > -1) {
-				$scope.list[i].licls['active-bg'] = true;
-				activeItem = $scope.list[i];
-				break;
-			}
+			];
 		}
+
+		$scope.list = [];
+
+		var activeItem = null;
+
+		var _tVc = $cookies.get('_tVc');
+		if (!_tVc) {
+			$state.go('login');
+		} else {
+			TIP.openLoading($scope);
+			API.fetchGet('/user', {_tVc: _tVc})
+				.then(function (data) {
+					TIP.hideLoading();
+					if (data.data.code == 1010) {
+						$scope.loginUserInfo.username = data.data.username;
+						$scope.loginUserInfo.auth = data.data.auth;
+						$scope.loginUserInfo.position = data.data.position;
+						$scope.loginUserInfo.id = data.data.id;
+						var list = gernerateList();
+						if (data.data.auth == 2) {
+							//客服
+							$scope.list.push(list[1]);
+							$scope.list.push(list[4]);
+						} else if (data.data.auth == 3) {
+							$scope.list.push(list[0]);
+							$scope.list.push(list[1]);
+							$scope.list.push(list[3]);
+							$scope.list.push(list[4]);
+						} else {
+							$scope.list = list;
+						}
+						var path = $location.path().slice(1);
+						for (var i = 0; i < $scope.list.length; i++) {
+							if ($scope.list[i].url.indexOf(path.split('/')[0]) > -1) {
+								$scope.list[i].licls['active-bg'] = true;
+								activeItem = $scope.list[i];
+								break;
+							}
+						}
+					} else {
+						TIP.openDialog(data.data.msg);
+						$setTimeout(function () {
+							$state.go('login');
+						}, 2000);
+					}
+				})
+				.catch(function (err) {
+					TIP.hideLoading();
+					console.log('出错啦');
+				})
+		}
+
+		
+		
 
 		$scope.toggleList = function (item) {
 			if (item.licls['active-bg']) {
@@ -90,10 +110,17 @@ angular.module('app')
 			item.licls['active-bg'] = true;
 			activeItem = item;
 
-			$state.go(item.state);
+			if (item.state == 'home.distributor') {
+				$state.go(item.state, {id: $scope.loginUserInfo.id});
+			} else {
+				$state.go(item.state);
+			}
+
+			
 		}
 
 		$scope.logout = function () {
+			$cookies.remove('_tVc');
 			$state.go('login');
 		}
 
