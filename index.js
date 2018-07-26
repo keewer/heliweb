@@ -2,6 +2,8 @@ global.__basename = __dirname;
 
 global.config = require(__basename + '/config/config.js');
 
+global.sequelize = require(__basename + '/lib/db/db_config/db_config.js');
+
 global.model = require(__basename + '/lib/db/model/model.js');
 
 const port = process.env_PORT || config.server.port;

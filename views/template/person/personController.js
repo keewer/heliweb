@@ -1,5 +1,5 @@
 angular.module('app')
-	.controller('personController', ['$scope', function ($scope) {
+	.controller('personController', ['$scope', 'API', function ($scope, API) {
 		
 		//权限
 		$scope.authority = 1;
@@ -11,8 +11,6 @@ angular.module('app')
 			idcard: '440883199703239087',
 			address: '广州市海珠区'
 		};
-
-		
 
 		$scope.pwdInfo = {
 			oldpwd: '',

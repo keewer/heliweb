@@ -53,7 +53,7 @@ angular.module('app')
 				}
 				API.fetchGet('/usercount', o)
 					.then(function (data) {
-						TIP.hideLoading();
+						
 
 						if (data.data.code == 3000) {
 							if (data.data.auth == 3 || data.data.auth == 2) {
@@ -71,7 +71,7 @@ angular.module('app')
 							}
 							API.fetchGet('/lastuser', query)
 							.then(function (data) {
-								console.log('users data ==> ', data);
+								TIP.hideLoading();
 								if (data.data.code == 3000) {
 									data.data.data.forEach(function (v, i) {
 										v.num = i + ($scope.option.curr - 1) * everyPageData;
@@ -91,6 +91,7 @@ angular.module('app')
 								}
 							})
 							.catch(function (err) {
+								TIP.hideLoading();
 								console.log('出错啦');
 							})
 
@@ -183,28 +184,43 @@ angular.module('app')
 				$state.go('login');
 			} else {
 				TIP.openLoading($scope);
-				var o = {
+
+				//身份证实名认证
+				API.fetchPost('/verifyidcard', {
+					cardNo: $scope.userInfo.idcard,
+					realName: $scope.userInfo.username,
 					_tVc: _tVc
-				};
-				for (var key in $scope.userInfo) {
-					if (key == 'repwd') {continue;}
-					o[key] = $scope.userInfo[key];
-				}
-				API.fetchPost('/adduser', o)
+				})
 					.then(function (data) {
-						$('#agent').modal('hide');
-						$('#agent input').val('');
-						TIP.hideLoading();
-						TIP.openDialog(data.data.msg);
+						if (data.data && data.data.reason == '认证通过') {
+							var o = {
+								_tVc: _tVc
+							};
+							for (var key in $scope.userInfo) {
+								if (key == 'repwd') {continue;}
+								o[key] = $scope.userInfo[key];
+							}
+							API.fetchPost('/adduser', o)
+								.then(function (data) {
+									$('#agent').modal('hide');
+									$('#agent input').val('');
+									TIP.hideLoading();
+									TIP.openDialog(data.data.msg);
+								})
+								.catch(function (err) {
+									TIP.hideLoading();
+									TIP.openDialog(data.data.msg);
+								})
+							} else {
+								TIP.hideLoading();
+								TIP.openDialog('身份证和真实姓名不匹配');
+							}
 					})
 					.catch(function (err) {
 						TIP.hideLoading();
-						console.log('出错啦');
-						TIP.openDialog(data.data.msg);
+						TIP.openDialog('服务器报错或者身份证号已存在');
 					})
 			}
-
-			
 		}
 		
 	}])

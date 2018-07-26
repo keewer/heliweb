@@ -4,7 +4,7 @@ const api = require(__basename + '/api/api.js');
 
 const common = require(__basename + '/common/common.js');
 
-console.log(utils.addCrypto('123456'));
+console.log(utils.addCrypto('440883199012032614'));
 
 class RouteController {
 
@@ -17,6 +17,7 @@ class RouteController {
 			return next();
 		}
 		var token = req.body._tVc || req.query._tVc;
+
 		if (!token) {
 			res.json(common.auth.fail);
 		} else {
@@ -25,7 +26,6 @@ class RouteController {
 				if (err) {
 					res.json(common.auth.fail);
 				} else {
-					console.log('decode.name ==> ', decode.name);
 					req.phone = decode.name;
 					next();
 				}
@@ -310,7 +310,6 @@ class RouteController {
 						req.body.pwd = utils.addCrypto(req.body.pwd);
 
 						let ro = {};
-
 						for (let key in req.body) {
 							ro[key] = req.body[key];
 						}
@@ -385,7 +384,7 @@ class RouteController {
 	}
 
 	loginController(req, res) {
-		console.log(req.body);
+
 		api.login('User', ['id', 'username', 'phone', 'pwd', 'auth', 'status', 'loginCount'], {phone: req.body.phone})
 			.then(result => {
 				if (result && result.dataValues) {
@@ -438,6 +437,38 @@ class RouteController {
 				console.log('loginController出错了');
 				res.json(common.login.fail);
 			})
+	}
+
+	verifyIdcardController(req, res) {
+
+		let params = {
+			key: config.verifyIdcardOptions.key,
+			cardNo: req.body.cardNo,
+			realName: req.body.realName,
+			information: config.verifyIdcardOptions.information
+		};
+
+		utils.verifyIdcard(params, result => {
+			res.send(result);
+		})
+	}
+
+	addProductController(req, res) {
+		api.create('Product', {
+			productNo: req.body.productNo,
+			name: req.body.name
+		})
+		.then(result => {
+			if (result && result.dataValues) {
+				res.send(common.add.success);
+			} else {
+				res.send(common.add.fail);
+			}
+			
+		})
+		.catch(err => {
+			res.json(common.add.fail);
+		})
 	}
 
 }

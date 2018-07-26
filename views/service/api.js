@@ -19,6 +19,14 @@ angular.module('app')
 						url: url,
 						data: data
 					});
+				},
+
+				fetchPut: function (url, data) {
+					return $http({
+						method: 'PUT',
+						url: url,
+						data: data
+					});
 				}
 
 			};

@@ -51,16 +51,12 @@
 				<div class="pull-left search">
 					<div class="form-group">
 						<div class="input-group">
-							<input class="form-control" type="text" name="search" placeholder="搜索商品..." />
+							<input class="form-control" type="text" name="search" placeholder="输入商品名称..." />
 							<span class="input-group-addon searching">
 								<i class="fa fa-search"></i>
 							</span>
 						</div>
 					</div>
-				</div>
-
-				<div class="pull-left add-btn" ng-if="authority === 3">
-					<button class="btn btn-primary" data-toggle="modal" data-target="#agent">新建订单</button>
 				</div>
 			</div>
 		</div>
@@ -124,34 +120,34 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">商品编号</span>
-	        			<input class="form-control" type="text" name="code" placeholder="商品编号" ng-model="product.code" ng-required="true" ng-pattern="/[<>]+/" ng-maxlength="20" />
+	        			<input class="form-control" type="text" name="code" placeholder="商品编号" autocomplete="off" ng-model="product.code" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-]+$/" ng-maxlength="100" />
 	        		</div>
 	        		<div ng-hide="userForm.code.$pristine">
 	        			<div class="alert alert-danger" ng-show="userForm.code.$error.required">
 	        				商品编号必填
 	        			</div>
-	        			<div class="alert alert-danger" ng-show="!userForm.code.$error.pattern">
-	        				商品编号不能含有< >符号
+	        			<div class="alert alert-danger" ng-show="userForm.code.$error.pattern">
+	        				商品编号不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·,，\.。
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.code.$error.maxlength">
-	        				商品编号过长，最多16个字符
+	        				商品编号过长，最多100个字符
 	        			</div>
 	        		</div>
 	        	</div>
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">商品名称</span>
-	        			<input class="form-control" type="text" name="name" placeholder="商品名称" ng-model="product.name" ng-required="true" ng-pattern="/[<>]+/" ng-maxlength="16" />
+	        			<input class="form-control" type="text" name="name" placeholder="商品名称" autocomplete="off" ng-model="product.name" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-]+$/" ng-maxlength="20" />
 	        		</div>
 	        		<div ng-hide="userForm.name.$pristine">
 	        			<div class="alert alert-danger" ng-show="userForm.name.$error.required">
 	        				商品名称必填
 	        			</div>
-	        			<div class="alert alert-danger" ng-show="!userForm.name.$error.pattern">
-	        				商品名称不能含有< >符号
+	        			<div class="alert alert-danger" ng-show="userForm.name.$error.pattern">
+	        				商品名称不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·,，\.。
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.name.$error.maxlength">
-	        				商品名称过长，最多16个字符
+	        				商品名称过长，最多20个字符
 	        			</div>
 	        		</div>
 	        	</div>
@@ -159,7 +155,7 @@
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid">确认</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="userForm.$invalid" ng-click="addProduct()">确认</button>
 	      </div>
 	    </div>
 	  </div>

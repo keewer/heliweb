@@ -58,6 +58,33 @@ class Utils {
 		return moment(date).format('YYYY-MM-DD HH:mm:ss');
 	}
 
+	verifyIdcard(params, fn) {
+		const http = require('http');
+		const querystring = require('querystring');
+
+		const content = querystring.stringify(params);//url编码参数
+
+		let options = {
+			hostname: config.verifyIdcardOptions.hostname,
+			port: config.verifyIdcardOptions.port,
+			path: config.verifyIdcardOptions.path,
+			method: config.verifyIdcardOptions.method,
+			headers: config.verifyIdcardOptions.headers
+		};
+
+		let req = http.request(options, res => {
+			res.setEncoding('utf8');
+      res.on('data', fn);
+		});
+
+		req.write(content);//POST方法传输数据
+    req.on('error', function (e) {
+        console.log('problem with request: ' + e.message);
+    });
+
+    req.end();
+	}
+
 }
 
 module.exports = new Utils();

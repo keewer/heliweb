@@ -34,5 +34,8 @@ module.exports = function (app) {
 
 	app.post('/login', routeController.loginController);
 
+	app.post('/verifyidcard', routeController.verifyIdcardController);
+
+	app.put('/addproduct', routeController.addProductController);
 
 }

@@ -180,25 +180,45 @@ angular.module('app')
 				$state.go('login');
 			} else {
 				TIP.openLoading($scope);
-				var o = {
+
+				//身份证实名认证
+				API.fetchPost('/verifyidcard', {
+					cardNo: $scope.userInfo.idcard,
+					realName: $scope.userInfo.username,
 					_tVc: _tVc
-				};
-				for (var key in $scope.userInfo) {
-					if (key == 'repwd') {continue;}
-					o[key] = $scope.userInfo[key];
-				}
-				API.fetchPost('/adduser', o)
+				})
 					.then(function (data) {
-						$('#agent').modal('hide');
-						$('#agent input').val('');
-						TIP.hideLoading();
-						TIP.openDialog(data.data.msg);
+
+						if (data.data && data.data.reason == '认证通过') {
+							var o = {
+								_tVc: _tVc
+							};
+							for (var key in $scope.userInfo) {
+								if (key == 'repwd') {continue;}
+								o[key] = $scope.userInfo[key];
+							}
+							API.fetchPost('/adduser', o)
+								.then(function (data) {
+									$('#agent').modal('hide');
+									$('#agent input').val('');
+									TIP.hideLoading();
+									TIP.openDialog(data.data.msg);
+								})
+								.catch(function (err) {
+									TIP.hideLoading();
+									TIP.openDialog(data.data.msg);
+								})
+						} else {
+							TIP.hideLoading();
+							TIP.openDialog('身份证和真实姓名不匹配');
+						}
 					})
 					.catch(function (err) {
 						TIP.hideLoading();
-						console.log('出错啦');
-						TIP.openDialog(data.data.msg);
+						TIP.openDialog('服务器报错或者身份证号已存在');
 					})
+
+
 			}
 
 		}
