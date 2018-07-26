@@ -456,7 +456,11 @@ class RouteController {
 	addProductController(req, res) {
 		api.create('Product', {
 			productNo: req.body.productNo,
-			name: req.body.name
+			name: req.body.name,
+			price: req.body.price,
+			firstLevel: req.body.firstlevel,
+			secondLevel: req.body.secondlevel,
+			thirdLevel: req.body.thirdlevel,
 		})
 		.then(result => {
 			if (result && result.dataValues) {
@@ -469,6 +473,59 @@ class RouteController {
 		.catch(err => {
 			res.json(common.add.fail);
 		})
+	}
+
+	updateProductController(req, res) {
+		api.update('Product', {
+			price: req.body.price,
+			firstLevel: req.body.firstlevel,
+			secondLevel: req.body.secondlevel,
+			thridLevel: req.body.thridlevel,
+			id: req.body.id,
+			productNo: req.body.productNo
+		})
+		.then(result => {
+			console.log(result);
+			res.json({msg: '更新成功', code: 3000});
+		})
+		.catch(err => {
+			res.json(common.server.error);
+		})
+	}
+
+	//查询商品数量
+	findProductCountController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+
+						api.findAndCountAll('Product', ['id', 'productNo', 'name', 'price', 'firstLevel', 'secondLevel', 'thirdLevel'])
+							.then(result => {
+
+								res.json({msg: '查询成功', code: 3000, auth, count: result.count, data: result.rows});
+							})
+							.catch(err => {
+								console.log('findProductCountController出错啦');
+								res.json(common.server.error);
+							})
+					}
+				}	else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询商品
+	findProductController(req, res) {
+
 	}
 
 }

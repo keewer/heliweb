@@ -1,47 +1,49 @@
 <div class="product">
 		<div class="product-top clearfix">
 		<div class="product-title pull-left">商品管理</div>
-		<div class="pull-right add-product" ng-if="authority === 1">
+		<div class="pull-right add-product" ng-if="authority == 0">
 			<button class="btn btn-success" data-toggle="modal" data-target="#addProduct">录入商品</button>
 		</div>
 	</div>
-	<div class="clearfix product-setting" ng-if="authority === 1">
+	<div class="clearfix product-setting" ng-if="authority == 0">
+
 		<div class="desc pull-left">商品设置</div>
 		<div class="pull-left date">
 			<div class="pull-left start-date-title">商品名称:</div>
-				<div class="start-date pull-left">
-					<select class="form-control">
-						<option>天香鸡</option>
-					</select>
+					<div class="start-date pull-left">
+						<select class="form-control" name="name" ng-model="setProduct.name" ng-options="item.id as item.name for item in productList" ng-change="selectProduct(setProduct.name)">
+						</select>
+					</div>
+			</div>
+			<form class="pull-left" name="productForm" novalidate>
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">商品单价:</div>
+					<div class="price pull-left">
+						<input class="form-control" type="text" name="price" autocomplete="off" ng-model="setProduct.price" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" />
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">商品单价:</div>
-				<div class="price pull-left">
-					<input class="form-control" type="text" name="starttime" />
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">一级返利:</div>
+					<div class="price pull-left">
+						<input class="form-control" type="text" name="firstlevel" autocomplete="off" ng-model="setProduct.firstlevel" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" />
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">一级返利:</div>
-				<div class="price pull-left">
-					<input class="form-control" type="text" name="firstgain" />
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">二级返利:</div>
+					<div class="price pull-left">
+						<input class="form-control" type="text" name="secondlevel" autocomplete="off" ng-model="setProduct.secondlevel" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" />
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">二级返利:</div>
-				<div class="price pull-left">
-					<input class="form-control" type="text" name="secondgain" />
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">三级返利:</div>
+					<div class="price pull-left">
+						<input class="form-control" type="text" name="thirdlevel" autocomplete="off" ng-model="setProduct.thirdlevel" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" />
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">三级返利:</div>
-				<div class="price pull-left">
-					<input class="form-control" type="text" name="thirdgain" />
+				<div class="pull-left date">
+					<button type="button" class="btn btn-primary" ng-disabled="productForm.$invalid || setProduct.name == ''">确认设置</button>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<button class="btn btn-primary">确认设置</button>
-			</div>
+			</form>
 	</div>
 
 	<div class="product-list">
@@ -108,7 +110,7 @@
 	</div>
 
 		<!-- 录入商品 -->
-	<div id="addProduct" class="modal fade" ng-if="authority === 1">
+	<div id="addProduct" class="modal fade" ng-if="authority == 0">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -148,6 +150,62 @@
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.name.$error.maxlength">
 	        				商品名称过长，最多20个字符
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">商品价格</span>
+	        			<input class="form-control" type="text" name="price" ng-model="product.price" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" placeholder="商品价格(元)" autocomplete="off" />
+	        		</div>
+	        		<div ng-hide="userForm.price.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.price.$error.required">
+	        				必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.price.$error.pattern">
+	        				商品价格必须是数字且最多2位小数
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">一级返利</span>
+	        			<input class="form-control" type="text" name="firstlevel" ng-model="product.firstlevel" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" placeholder="一级返利(元)" autocomplete="off" />
+	        		</div>
+	        		<div ng-hide="userForm.firstlevel.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.firstlevel.$error.required">
+	        				必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.firstlevel.$error.pattern">
+	        				一级返利必须是数字且最多2位小数
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">二级返利</span>
+	        			<input class="form-control" type="text" name="secondlevel" ng-model="product.secondlevel" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" placeholder="二级返利(元)" autocomplete="off" />
+	        		</div>
+	        		<div ng-hide="userForm.secondlevel.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.secondlevel.$error.required">
+	        				必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.secondlevel.$error.pattern">
+	        				二级返利必须是数字且最多2位小数
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">三级返利</span>
+	        			<input class="form-control" type="text" name="thirdlevel" ng-model="product.thirdlevel" ng-required="true" ng-pattern="/^\d+(?=\.{0,1}\d{1,2}$|$)/" placeholder="三级返利(元)" autocomplete="off" />
+	        		</div>
+	        		<div ng-hide="userForm.thirdlevel.$pristine">
+	        			<div class="alert alert-danger" ng-show="userForm.thirdlevel.$error.required">
+	        				必填
+	        			</div>
+	        			<div class="alert alert-danger" ng-show="userForm.thirdlevel.$error.pattern">
+	        				三级返利必须是数字且最多2位小数
 	        			</div>
 	        		</div>
 	        	</div>

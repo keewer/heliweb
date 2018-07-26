@@ -36,6 +36,10 @@ module.exports = function (app) {
 
 	app.post('/verifyidcard', routeController.verifyIdcardController);
 
+	app.get('/findproductcount', routeController.findProductCountController);
+
 	app.put('/addproduct', routeController.addProductController);
+
+	app.post('/updateproduct', routeController.findProductCountController);
 
 }
