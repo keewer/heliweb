@@ -40,6 +40,16 @@ module.exports = function (app) {
 
 	app.put('/addproduct', routeController.addProductController);
 
-	app.post('/updateproduct', routeController.findProductCountController);
+	app.post('/updateproduct', routeController.updateProductController);
+
+	app.get('/findproductnums', routeController.findProductNumsController);
+
+	app.get('/findproduct', routeController.findProductController);
+
+	app.post('/changeproductstatus', routeController.changeProductStatusController);
+
+	app.post('/modifyaddress', routeController.modifyAddressController);
+
+	app.post('/modifypwd', routeController.modifyPwdController);
 
 }

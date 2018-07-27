@@ -41,20 +41,24 @@
 					</div>
 				</div>
 				<div class="pull-left date">
-					<button type="button" class="btn btn-primary" ng-disabled="productForm.$invalid || setProduct.name == ''">确认设置</button>
+					<button type="button" class="btn btn-primary" ng-disabled="productForm.$invalid || setProduct.name == ''" ng-click="updateProduct()">确认设置</button>
 				</div>
 			</form>
+			
 	</div>
 
 	<div class="product-list">
 		<div class="product-list-head clearfix">
 			<div class="desc pull-left">商品列表</div>
 			<div class="product-operation">
+				<div class="pull-left show-all-data">
+					<button type="button" class="btn btn-primary" ng-disabled="!isSearch" ng-click="showAllData()">显示所有数据</button>
+				</div>
 				<div class="pull-left search">
 					<div class="form-group">
 						<div class="input-group">
-							<input class="form-control" type="text" name="search" placeholder="输入商品名称..." />
-							<span class="input-group-addon searching">
+							<input class="form-control" type="text" name="search" placeholder="输入商品名称..." ng-keydown="enterSearching($event)" ng-model="search.name" />
+							<span class="input-group-addon searching" ng-click="searching()">
 								<i class="fa fa-search"></i>
 							</span>
 						</div>
@@ -71,40 +75,36 @@
 						<th>商品编号</th>
 						<th>商品名称</th>
 						<th>商品单价</th>
+						<th>状态</th>
 						<th>一级返利</th>
 						<th>二级返利</th>
 						<th>三级返利</th>
-						<th>设置时间</th>
+						<th>录入时间</th>
 						<th>操作</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="item in pageDataList track by $index">
 						<td>{{item.num + 1}}</td>
-						<td>{{item.code}}</td>
+						<td>{{item.productNo}}</td>
 						<td>{{item.name}}</td>
 						<td>{{item.price}}</td>
-						<td>{{item.firstgain}}</td>
-						<td>{{item.secondgain}}</td>
-						<td>{{item.thirdgain}}</td>
-						<td>{{item.settingTime}}</td>
+						<td>{{item.status == 0 ? '禁用' : '正常'}}</td>
+						<td>{{item.firstLevel}}</td>
+						<td>{{item.secondLevel}}</td>
+						<td>{{item.thirdLevel}}</td>
+						<td>{{item.create_time}}</td>
 						<td>
-							<button class="btn btn-warning btn-xs">启用</button>
-							<button class="btn btn-danger btn-xs">禁用</button>
-							<button class="btn btn-default btn-xs">无权限</button>
+							<button class="btn btn-warning btn-xs" ng-if="authority == 0 && item.status == 0" ng-click="changeStatus(item)">启用</button>
+							<button class="btn btn-danger btn-xs" ng-if="authority == 0 && item.status == 1" ng-click="changeStatus(item)">禁用</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
-		<div class="product-pagination">
-			<ul class="pagination">
-		    <li ng-click="previousPage()"><span>上一页</span></li>
-		    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
-		    <li ng-click="nextPage()"><span>下一页</span></li>
-		    <li><span>共{{pageCounts}}页</span></li>
-		  </ul>
+		<div id="pagination" class="product-pagination">
+			
  	 	</div>
 
 	</div>

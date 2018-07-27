@@ -4,17 +4,20 @@
 		<div class="pull-right modifiy-pwd">
 			<button class="btn btn-warning" data-toggle="modal" data-target="#modifyPwd">修改密码</button>
 		</div>
+		<div class="pull-right modifiy-pwd">
+			<button class="btn btn-success" ng-disabled="isModifyAddress" ng-click="modifyAddress()">修改联系地址</button>
+		</div>
 
 	</div>
 	<div class="user-data">
-		<h3 class="text-center">个人基本信息</h3>
-		<form>
+		<h3 class="text-center title">个人基本信息</h3>
+		<form name="userForm" novalidate>
 			<div class="form-group">
 				<div class="input-group">
 					<span class="input-group-addon">
 						姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名
 					</span>
-					<input class="form-control" type="text" name="username" autocomplete="off" ng-disabled="true" ng-model="userInfo.username" />
+					<input class="form-control" type="text" name="username" autocomplete="off" ng-disabled="true" ng-model="userInfo.username" placeholder="用户名" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -22,13 +25,13 @@
 					<span class="input-group-addon">
 						职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位
 					</span>
-					<input class="form-control" type="text" name="position" autocomplete="off" ng-disabled="true" ng-model="userInfo.position" />
+					<input class="form-control" type="text" name="position" autocomplete="off" ng-disabled="true" ng-model="userInfo.position" placeholder="职位" />
 				</div>
 			</div>
 			<div class="form-group">
 				<div class="input-group">
 					<span class="input-group-addon">手&nbsp;&nbsp;机&nbsp;&nbsp;号</span>
-					<input class="form-control" type="text" name="phone" autocomplete="off" ng-disabled="true" ng-model="userInfo.phone" />
+					<input class="form-control" type="text" name="phone" autocomplete="off" ng-disabled="true" ng-model="userInfo.phone" placeholder="手机号" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -36,16 +39,25 @@
 					<span class="input-group-addon">
 						身份证号
 					</span>
-					<input class="form-control" type="text" name="idcard" autocomplete="off" ng-disabled="true" ng-model="userInfo.idcard" />
+					<input class="form-control" type="text" name="idcard" autocomplete="off" ng-disabled="true" ng-model="userInfo.idcard" placeholder="身份证号" />
 				</div>
 			</div>
 			<div class="form-group">
 				<div class="input-group">
 					<span class="input-group-addon">
-						收货地址
+						联系地址
 					</span>
-					<input class="form-control" type="text" name="address" autocomplete="off" ng-disabled="true" ng-model="userInfo.address" />
+					<input class="form-control" type="text" name="address" autocomplete="off" ng-disabled="!isModifyAddress" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" placeholder="联系地址" />
 				</div>
+				<div ng-hide="userForm.address.$pristine">
+	        <div class="alert alert-danger" ng-show="userForm.address.$error.required">联系地址必填</div>
+	        <div class="alert alert-danger" ng-show="userForm.address.$error.pattern">联系地址不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·</div>
+	        <div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">联系地址过长，最多30个字符</div>
+	      </div>
+			</div>
+			<div class="form-group">
+				<button ng-if="isModifyAddress" type="button" class="btn btn-primary" ng-disabled="userForm.$invalid" ng-click="commitModifyAddress()">确 认</button>
+				<button ng-if="isModifyAddress" type="button" class="btn btn-default" ng-click="cancelModifyAddress()">取 消</button>
 			</div>
 		</form>
 	</div>
@@ -74,6 +86,7 @@
 								<div class="alert alert-danger" ng-show="pwdForm.oldpwd.$error.pattern">
 									<p>密码格式错误，只能数字字母下划线组合6-16位</p>
 								</div>
+
 							</div>
 	        	</div>
 	        	<div class="form-group">
@@ -89,6 +102,9 @@
 								</div>
 								<div class="alert alert-danger" ng-show="pwdForm.newpwd.$error.pattern">
 									<p>新密码格式错误，只能数字字母下划线组合6-16位</p>
+								</div>
+								<div class="alert alert-danger" ng-show="pwdInfo.newpwd == pwdInfo.oldpwd">
+									<p>新密码不能和旧密码一致</p>
 								</div>
 							</div>
 	        	</div>
@@ -109,7 +125,7 @@
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-	        <button type="button" class="btn btn-primary" ng-disabled="pwdForm.$invalid">确认</button>
+	        <button type="button" class="btn btn-primary" ng-disabled="pwdForm.$invalid || pwdInfo.newpwd == pwdInfo.oldpwd || pwdInfo.renewpwd != pwdInfo.newpwd" ng-click="modifyPwd()">确认</button>
 	      </div>
 	    </div>
 	  </div>

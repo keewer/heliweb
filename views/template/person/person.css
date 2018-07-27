@@ -55,6 +55,9 @@
 .person .user-data{
 	width: 600px;
 	margin: 100px auto 0;
-	font-size: 20px;
 	color: #333;
+}
+
+.person .title{
+	font-size: 20px;
 }

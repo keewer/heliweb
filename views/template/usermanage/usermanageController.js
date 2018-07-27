@@ -142,7 +142,7 @@ angular.module('app')
 			}
 		}
 
-		$scope.search = function () {
+		$scope.searching = function () {
 
 			$scope.search.user = $scope.search.user ? $scope.search.user : '';
 
@@ -220,6 +220,12 @@ angular.module('app')
 						TIP.hideLoading();
 						TIP.openDialog('服务器报错或者身份证号已存在');
 					})
+			}
+		}
+
+		$scope.enterSearching = function (e) {
+			if (e.keyCode == 13) {
+				$scope.searching();
 			}
 		}
 		

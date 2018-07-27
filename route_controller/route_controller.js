@@ -245,7 +245,7 @@ class RouteController {
 
 	//查询当前用户信息
 	userController(req, res) {
-		api.findOne('User', ['id', 'username', 'auth', 'status', 'position'], {phone: req.phone})
+		api.findOne('User', ['id', 'username', 'phone', 'auth', 'status', 'idcard', 'position', 'address'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -263,7 +263,7 @@ class RouteController {
 			})
 	}
 
-	//禁用用户
+	//切换用户状态
 	changeUserStatusController(req, res) {
 		api.findOne('User', ['status'], {phone: req.phone})
 			.then(result => {
@@ -480,10 +480,8 @@ class RouteController {
 			price: req.body.price,
 			firstLevel: req.body.firstlevel,
 			secondLevel: req.body.secondlevel,
-			thridLevel: req.body.thridlevel,
-			id: req.body.id,
-			productNo: req.body.productNo
-		})
+			thridLevel: req.body.thridlevel
+		}, {id: Number(req.body.id)})
 		.then(result => {
 			console.log(result);
 			res.json({msg: '更新成功', code: 3000});
@@ -493,7 +491,7 @@ class RouteController {
 		})
 	}
 
-	//查询商品数量
+	//查询商品数量和所有产品
 	findProductCountController(req, res) {
 		api.findOne('User', ['status', 'auth'], {phone: req.phone})
 			.then(result => {
@@ -523,9 +521,190 @@ class RouteController {
 			})
 	}
 
+	//查询商品数量
+	findProductNumsController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						api.count('Product')
+							.then(result => {
+								res.json({msg: '查询成功', code: 3000, auth: auth, count: result});
+							})
+							.catch(err => {
+								console.log('findProductNumsController出错啦');
+								res.json(common.server.error);
+							})
+					}
+				}	else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
 	//查询商品
 	findProductController(req, res) {
+		api.findOne('User', ['auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						var o = {
+							id: {
+								$ne: 0
+							}
+						};
+						var auth = result.dataValues.auth;
+						var attrs = [
+							'id',
+							'productNo',
+							'name',
+							'price',
+							'status',
+							'firstLevel',
+							'secondLevel',
+							'thirdLevel',
+							'create_time'
+						];
 
+						if (req.query.name) {
+							o.name = req.query.name;
+						}
+						api.findAll('Product', attrs, o, Number(req.query.offset), Number(req.query.limit), [['id', 'DESC']])
+							.then(result => {
+								if (result && Array.isArray(result)) {
+									let data = [];
+									result.forEach(v => {
+										data.push(v);
+									})
+									res.json({msg: '查询成功', code: 3000, auth, data});
+								} else {
+									res.json({msg: '没有数据', code: 3001, auth: auth});
+								}
+								
+							})
+							.catch(err => {
+								console.log('findProductController出错啦');
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//切换商品状态
+	changeProductStatusController(req, res) {
+		api.findOne('User', ['auth', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						api.update('Product', {
+							status: Number(req.body.status)
+						}, {id: Number(req.body.id)})
+						.then(result => {
+							res.json({msg: '更新成功', code: 6000, auth, status: req.body.status});
+						})
+						.catch(err => {
+							console.log('changeProductStatusController出错了');
+							res.json(common.server.error);
+						})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+				
+			})
+			.catch(err => {
+				console.log('changeProductStatusController出错了');
+				res.json(common.server.error);
+			})
+		
+	}
+
+	//修改地址
+	modifyAddressController(req, res) {
+		api.findOne('User', ['id', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						api.update('User', {
+							address: req.body.address
+						}, {id: Number(result.dataValues.id)})
+						.then(result => {
+							res.json({msg: '更新成功', code: 6000});
+						})
+						.catch(err => {
+							console.log('modifyAddressController出错了');
+							res.json(common.server.error);
+						})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+				
+			})
+			.catch(err => {
+				console.log('modifyAddressController出错了');
+				res.json(common.server.error);
+			})
+	}
+
+	//修改密码
+	modifyPwdController(req, res) {
+		api.findOne('User', ['id', 'pwd', 'status'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let pwd = utils.addCrypto(req.body.oldpwd);
+						if (pwd != result.dataValues.pwd) {
+							res.json(common.login.info);
+						} else {
+							let newpwd = utils.addCrypto(req.body.newpwd);
+							api.update('User', {
+								pwd: newpwd
+							}, {id: Number(result.dataValues.id)})
+							.then(result => {
+								res.json({msg: '更新成功', code: 6000});
+							})
+							.catch(err => {
+								console.log('modifyPwdController出错了');
+								res.json(common.server.error);
+							})
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+				
+			})
+			.catch(err => {
+				console.log('modifyPwdController出错了');
+				res.json(common.server.error);
+			})
 	}
 
 }

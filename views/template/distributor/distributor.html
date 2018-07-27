@@ -8,8 +8,8 @@
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
-						<input class="form-control" type="text" name="search" placeholder="输入分销商姓名..." ng-model="search.user" />
-						<span class="input-group-addon searching" ng-click="search()">
+						<input class="form-control" type="text" name="search" placeholder="输入分销商姓名..." ng-model="search.user" ng-keydown="enterSearching($event)" />
+						<span class="input-group-addon searching" ng-click="searching()">
 							<i class="fa fa-search"></i>
 						</span>
 					</div>
@@ -30,7 +30,7 @@
 					<th>手机号</th>
 					<th>职位</th>
 					<th>状态</th>
-					<th>收货地址</th>
+					<th>联系地址</th>
 					<th>主关系</th>
 					<th>次关系</th>
 					<th>登录次数</th>
@@ -153,17 +153,17 @@
 	        			<span class="input-group-addon">
 	        				<i class="fa fa-location-arrow"></i>
 	        			</span>
-	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" />
+	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="联系地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" />
 	        		</div>
 	        		<div ng-hide="userForm.address.$pristine">
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.required">
-	        				收货地址必填
+	        				联系地址必填
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.pattern">
-	        				收货地址不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·
+	        				联系地址不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·
 	        			</div>
 	        			<div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">
-	        				收货地址过长，最多30个字符
+	        				联系地址过长，最多30个字符
 	        			</div>
 	        		</div>
 	        	</div>

@@ -145,7 +145,7 @@ angular.module('app')
 			}
 		}
 
-		$scope.search = function () {
+		$scope.searching = function () {
 
 			$scope.search.user = $scope.search.user ? $scope.search.user : '';
 
@@ -162,6 +162,12 @@ angular.module('app')
 				initPage($scope.search.user);
 			}
 			
+		}
+
+		$scope.enterSearching = function (e) {
+			if (e.keyCode == 13) {
+				$scope.searching();
+			}
 		}
 
 		$scope.showAllData = function () {

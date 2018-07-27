@@ -48,7 +48,7 @@ angular.module('app')
 						var time = new Date().getTime() + 86400000;
 						time = new Date(time);
 						$cookies.put('_tVc', data.data._tVc, {expires: time});
-
+						$(document).unbind();
 						if (data.data.auth == 0 || data.data.auth == 1) {
 							$state.go('home.usermanage');
 						} else if (data.data.auth == 2) {
@@ -63,9 +63,15 @@ angular.module('app')
 					
 				})
 				.catch(function (err) {
-					// console.log('err ==> ', err);
 					TIP.hideLoading();
+					TIP.openDialog('服务器报错');
 				})
 		}
+
+		$(document).on('keydown', function (e) {
+			if (e.keyCode == 13 && $scope.userForm.$valid) {
+				$scope.login();
+			}
+		})
 
 	}])
