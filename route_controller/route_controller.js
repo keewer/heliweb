@@ -502,7 +502,7 @@ class RouteController {
 					} else {
 						let auth = result.dataValues.auth;
 
-						api.findAndCountAll('Product', ['id', 'productNo', 'name', 'price', 'firstLevel', 'secondLevel', 'thirdLevel'])
+						api.findAndCountAll('Product', ['id', 'productNo', 'name', 'price', 'firstLevel', 'secondLevel', 'thirdLevel'], {status: 1})
 							.then(result => {
 
 								res.json({msg: '查询成功', code: 3000, auth, count: result.count, data: result.rows});

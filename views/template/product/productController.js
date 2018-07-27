@@ -301,6 +301,7 @@ angular.module('app')
 						TIP.openDialog(data.data.msg);
 					} else {
 						item.status = data.data.status;
+						init();
 					}
 				})
 				.catch(function (err) {

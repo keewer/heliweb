@@ -17,8 +17,8 @@ class API {
 	}
 
 	//分页查询
-	findAndCountAll(modelName, attrs) {
-		return sql.findAndCountAll(modelName, attrs);
+	findAndCountAll(modelName, attrs, o) {
+		return sql.findAndCountAll(modelName, attrs, o);
 	}
 
 	//更新字段

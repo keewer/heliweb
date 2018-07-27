@@ -45,6 +45,11 @@ angular.module('app')
 
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
+						if (data.data.auth == 4) {
+							getImgCode();
+							TIP.openDialog('该用户是分销商，无权限登录');
+							return;
+						}
 						var time = new Date().getTime() + 86400000;
 						time = new Date(time);
 						$cookies.put('_tVc', data.data._tVc, {expires: time});
@@ -55,16 +60,18 @@ angular.module('app')
 							$state.go('home.order');
 						} else if (data.data.auth == 3) {
 							$state.go('home.distributor', {id: data.data.id});
-						}
+						} 
 						
 					} else{
 						TIP.openDialog(data.data.msg);
+						getImgCode();
 					}
 					
 				})
 				.catch(function (err) {
 					TIP.hideLoading();
 					TIP.openDialog('服务器报错');
+					getImgCode();
 				})
 		}
 

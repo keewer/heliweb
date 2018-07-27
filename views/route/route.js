@@ -105,5 +105,15 @@ angular.module('app')
 					}]
 				}
 			})
+			.state('home.editorder', {
+				url: '/editorder',
+				templateUrl: 'template/editorder/editorder.html',
+				controller: 'editorderController',
+				resolve: {
+					des: ['$ocLazyLoad', function ($ocLazyLoad) {
+						return $ocLazyLoad.load('editorder');
+					}]
+				}
+			})
 
 	}])
