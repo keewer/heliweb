@@ -1,5 +1,5 @@
 angular.module('app')
-	.controller('orderController', ['$scope', '$state', '$cookies', '$timeout', 'API', 'TIP', function ($scope, $state, $cookies, $timeout, API, TIP) {
+	.controller('orderController', ['$scope', '$state', '$cookies', '$timeout', '$compile', 'API', 'TIP', function ($scope, $state, $cookies, $timeout, $compile, API, TIP) {
 
 		//权限
 		$scope.authority = -1;
@@ -44,6 +44,7 @@ angular.module('app')
 						} else {
 							$('#newOrder').modal('hide');
 							$('#newOrder input').val('');
+							$scope.isSearch = true;
 						}
 					})
 					.catch(function (err) {
@@ -112,6 +113,10 @@ angular.module('app')
 
 		var isInit = true;
 
+		$scope.search = {
+			orderNo: ''
+		}
+
 		//每一页显示数据数量
 		var everyPageData = 10;
 
@@ -128,7 +133,9 @@ angular.module('app')
 	    }
 	  };
 
-	   function initPage(name) {
+	  initPage();
+
+	  function initPage(orderNo) {
 		  var _tVc = $cookies.get('_tVc');
 		  if (!_tVc) {
 				$state.go('login');
@@ -137,12 +144,11 @@ angular.module('app')
 				var o = {
 					_tVc: _tVc
 				};
-				if (name) {
-					o.name = name;
+				if (orderNo) {
+					o.orderNo = orderNo;
 				}
 				API.fetchGet('/findordercount', o)
 					.then(function (data) {
-						
 						if (data.data.code == 3000) {
 							if (data.data.auth == 2) {
 								return $state.go('login');
@@ -154,12 +160,13 @@ angular.module('app')
 								limit: everyPageData
 							};
 
-							if (name) {
-								query.name = name;
+							if (orderNo) {
+								query.orderNo = orderNo;
 							}
 
 							API.fetchGet('/findorder', query)
 							.then(function (data) {
+								console.log('data ==> ', data);
 								TIP.hideLoading();
 								if (data.data.code == 3000) {
 									data.data.data.forEach(function (v, i) {
@@ -185,6 +192,7 @@ angular.module('app')
 							})
 
 
+
 						} else if (data.data.code == 4001) {
 							$state.go('login');
 						}
@@ -194,6 +202,15 @@ angular.module('app')
 						TIP.openDialog('服务器报错');
 					})
 			}
+		}
+
+		$scope.showAllData = function () {
+			$scope.option.curr = 1;
+			document.getElementById('pagination').innerHTML = '';
+			isInit = true;
+			$scope.isSearch = false;
+			$scope.search.user = '';
+			initPage();
 		}
 
 

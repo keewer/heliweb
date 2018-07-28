@@ -54,6 +54,15 @@ class API {
 		return sql.max(modelName, field);
 	}
 
+	//原始查询
+	query(s, o) {
+		//s: 原始sql语句
+		//o: 替换对象
+		//SELECT * FROM projects WHERE status = :status;
+		//replacements: { status: 'active' }
+		return sql.query(s, o);
+	}
+
 }
 
 module.exports = new API();

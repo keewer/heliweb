@@ -3,12 +3,12 @@
 		<div class="order-title">订单管理/<span class="second-order-title">总代理订单/分销商订单</span></div>
 		<div class="order-operation">
 			<div class="pull-left show-all-data">
-				<button type="button" class="btn btn-primary">显示所有数据</button>
+				<button type="button" class="btn btn-primary" ng-disabled="!isSearch" ng-click="showAllData()">显示所有数据</button>
 			</div>
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
-						<input class="form-control" type="text" name="search" placeholder="搜索分销商订单..." />
+						<input class="form-control" type="text" name="search" placeholder="输入订单号..." ng-model="search.orderNo" />
 						<span class="input-group-addon searching">
 							<i class="fa fa-search"></i>
 						</span>
@@ -30,6 +30,7 @@
 					<th>订单编号</th>
 					<th>商品编号</th>
 					<th>商品名称</th>
+					<th>商品价格</th>
 					<th>商品数量</th>
 					<th>订单状态</th>
 					<th>总代理</th>
@@ -43,16 +44,17 @@
 			<tbody>
 				<tr ng-repeat="item in pageDataList track by $index">
 					<td>{{item.num + 1}}</td>
-					<td>{{item.code}}</td>
-					<td>{{item.pcode}}</td>
+					<td>{{item.orderNo}}</td>
+					<td>{{item.productNo}}</td>
 					<td>{{item.name}}</td>
+					<td>{{item.price}}</td>
 					<td>{{item.count}}</td>
 					<td>{{item.status === 0 ? '待付款' : item.status === 1 ? '已付款' : item.status === 2 ? '已发货' : item.status === 3 ? '已收货': '无效'}}</td>
 					<td>{{item.agent}}</td>
-					<td>{{item.receiver}}</td>
+					<td>{{item.username}}</td>
 					<td>{{item.phone}}</td>
 					<td>{{item.address}}</td>
-					<td>{{item.orderTime}}</td>
+					<td>{{item.create_time}}</td>
 					<th>
 						<button class="btn btn-xs btn-success" ng-if="item.status === 0">付款</button>
 						<button class="btn btn-xs btn-danger" ng-if="item.status === 0">删除</button>

@@ -54,4 +54,8 @@ module.exports = function (app) {
 
 	app.put('/addorder', routeController.addOrderController);
 
+	app.get('/findordercount', routeController.findOrderCountController);
+
+	app.get('/findorder', routeController.findOrderController);
+
 }

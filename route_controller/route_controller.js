@@ -340,7 +340,7 @@ class RouteController {
 							})
 							.catch(err => {
 								console.log('addUserController出错了');
-								res.json(common.server.error);
+								res.json({msg: '服务器报错或者手机号已存在', code: 5001});
 							})
 
 
@@ -440,6 +440,9 @@ class RouteController {
 	}
 
 	verifyIdcardController(req, res) {
+
+		//测试不需要身份验证
+		return res.json({reason: '认证通过'});
 
 		let params = {
 			key: config.verifyIdcardOptions.key,
@@ -753,6 +756,25 @@ class RouteController {
 												if (!max) {
 													//如果订单号不存在
 													orderNo += '0000000001';
+													api.create('Order', {
+														orderNo,
+														productNo: req.body.productNo,
+														name: req.body.productName,
+														price: req.body.price,
+														count: req.body.count,
+														uid: id,
+														address: req.body.address,
+														status: 0,
+														primaryRelationship,
+														secondaryRelationship,
+														auth: 4
+													})
+														.then(result => {
+															res.json({msg: '创建订单成功', code: 9000});
+														})
+														.catch(err => {
+															res.json(common.server.error);
+														})
 												} else {
 													//如果订单号存在
 													api.findOne('Order', ['orderNo'], {id: max})
@@ -774,7 +796,8 @@ class RouteController {
 																	address: req.body.address,
 																	status: 0,
 																	primaryRelationship,
-																	secondaryRelationship
+																	secondaryRelationship,
+																	auth: 4
 																})
 																	.then(result => {
 																		res.json({msg: '创建订单成功', code: 9000});
@@ -820,7 +843,85 @@ class RouteController {
 	}
 
 	//查询订单数目
-	findOrderCountController() {
+	findOrderCountController(req, res) {
+		api.findOne('User', ['id', 'status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						if (auth == 3) {
+							//总代理查询名下订单数目
+							api.count('Order', {primaryRelationship: result.dataValues.id})
+							.then(result => {
+								res.json({msg: '查询成功', code: 3000, auth: auth, count: result});
+							})
+							.catch(err => {
+								console.log('findOrderCountController出错啦');
+								res.json(common.server.error);
+							})
+							
+						} else {
+							//先查询指定总代理id
+
+						}
+						
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询分销商订单
+	findOrderController(req, res) {
+		api.findOne('User', ['id', 'username', 'status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						if (result.dataValues.auth == 3) {
+							let username = result.dataValues.username;
+							//查询该总代理所有订单分页
+							//联表查询分销商姓名和手机号
+							let sql = "SELECT `u`.`username`, `u`.`phone`, `o`.* FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`uid` AND `o`.`primaryRelationship` = :primaryRelationship ORDER BY `o`.`id` DESC LIMIT :offseting, :limiting";
+
+							api.query(sql, 
+								{
+									primaryRelationship: result.dataValues.id,
+									offseting: Number(req.query.offset),
+									limiting: Number(req.query.limit)
+								})
+								.then(result => {
+									if (result && Array.isArray(result)) {
+										result.forEach(v => {
+											v.agent = username;
+										})
+									}
+									res.json({msg: '查询成功', code: 3000, data: result});
+								})
+								.catch(err => {
+									res.json(common.auth.fail);
+								})
+						} else {
+							//总经理, 营销总监, 客服
+							//查询总代理id所有订单分页
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
 		
 	}
 
