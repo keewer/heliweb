@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="pull-left add-btn" ng-if="authority == 3">
-				<button class="btn btn-primary" ng-click="showModal();">新建订单</button>
+				<button class="btn btn-primary" data-toggle="modal" data-target="#newOrder">新建订单</button>
 			</div>
 		</div>
 	</div>
@@ -75,15 +75,30 @@
 	        <h4 class="modal-title">新建订单</h4>
 	      </div>
 	      <div class="modal-body">
-	        <form name="userForm" novalidate>
+	        <form name="orderForm" novalidate>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				订单编号
+	        			</span>
+	        			<input class="form-control" type="text" name="orderno" ng-model="orderInfo.orderNo" placeholder="订单编号" ng-disabled="true" />
+	        		</div>
+	        	</div>
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
 	        				商品名称
 	        			</span>
-	        			<select class="form-control">
-	        				<option>天香鸡</option>
+	        			<select class="form-control" ng-model="orderInfo.name" ng-options="item.id as item.name for item in productList" ng-change="selectProduct(orderInfo.name)">
 	        			</select>
+	        		</div>
+	        	</div>
+	        	<div class="form-group">
+	        		<div class="input-group">
+	        			<span class="input-group-addon">
+	        				商品编号
+	        			</span>
+	        			<input class="form-control" type="text" name="productno" ng-model="orderInfo.productNo" placeholder="商品编号" ng-disabled="true" />
 	        		</div>
 	        	</div>
 	        	<div class="form-group">
@@ -91,7 +106,7 @@
 	        			<span class="input-group-addon">
 	        				商品单价
 	        			</span>
-	        			<input class="form-control" type="text" name="price" ng-model="price" placeholder="商品价格" ng-disabled="true" />
+	        			<input class="form-control" type="text" name="price" ng-model="orderInfo.price" placeholder="商品价格" ng-disabled="true" />
 	        		</div>
 	        	</div>
 
@@ -100,16 +115,16 @@
 	        			<span class="input-group-addon">
 	        				商品数量
 	        			</span>
-	        			<input class="form-control" type="text" name="count" autocomplete="off" placeholder="商品数量" ng-model="userInfo.count" ng-required="true" ng-pattern="/^[1-9]\d*$/" />
+	        			<input class="form-control" type="text" name="count" autocomplete="off" placeholder="商品数量" ng-model="orderInfo.count" ng-required="true" ng-pattern="/^[1-9]\d*$/" />
 	        		</div>
-	        		<div ng-hide="userForm.count.$pristine">
-								<div class="alert alert-danger" ng-show="userForm.count.$error.required">
+	        		<div ng-hide="orderForm.count.$pristine">
+								<div class="alert alert-danger" ng-show="orderForm.count.$error.required">
 									<p>数量必填</p>
 								</div>
-								<div class="alert alert-danger" ng-show="userForm.count.$error.pattern">
-									<p>数量只能填写数字，且不能以0开头</p>
+								<div class="alert alert-danger" ng-show="orderForm.count.$error.pattern">
+									<p>数量只能填写数字，且不能以0开头，不能有小数</p>
 								</div>
-								<div class="alert alert-danger" ng-show="userInfo.count <= 0">
+								<div class="alert alert-danger" ng-show="orderInfo.count <= 0">
 									<p>数量至少为1</p>
 								</div>
 							</div>
@@ -120,10 +135,10 @@
 	        			<span class="input-group-addon">
 	        				收&nbsp;&nbsp;货&nbsp;&nbsp;人
 	        			</span>
-	        			<input class="form-control" type="password" name="receive" autocomplete="off" placeholder="收货人(分销商真实姓名)" ng-model="userInfo.receive" ng-required="true" />
+	        			<input class="form-control" type="text" name="receive" autocomplete="off" placeholder="收货人(分销商真实姓名)" ng-model="orderInfo.receive" ng-required="true" />
 	        		</div>
-	        		<div ng-hide="userForm.receive.$pristine">
-	        			<div class="alert alert-danger" ng-show="userForm.receive.$error.required">
+	        		<div ng-hide="orderForm.receive.$pristine">
+	        			<div class="alert alert-danger" ng-show="orderForm.receive.$error.required">
 									<p>收货人必填</p>
 								</div>
 	        		</div>
@@ -134,13 +149,13 @@
 	        			<span class="input-group-addon">
 	        				手机号码
 	        			</span>
-	        			<input class="form-control" type="text" name="phone" autocomplete="off" placeholder="手机号码(必须是分销商手机号)" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" />
+	        			<input class="form-control" type="text" name="phone" autocomplete="off" placeholder="手机号码(必须是分销商手机号)" ng-model="orderInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" />
 	        		</div>
-	        		<div ng-hide="userForm.phone.$pristine">
-								<div class="alert alert-danger" ng-show="userForm.phone.$error.required">
+	        		<div ng-hide="orderForm.phone.$pristine">
+								<div class="alert alert-danger" ng-show="orderForm.phone.$error.required">
 									<p>手机号必填</p>
 								</div>
-								<div class="alert alert-danger" ng-show="userForm.phone.$error.pattern">
+								<div class="alert alert-danger" ng-show="orderForm.phone.$error.pattern">
 									<p>手机号格式错误</p>
 								</div>
 							</div>
@@ -151,28 +166,29 @@
 	        			<span class="input-group-addon">
 	        				收货地址
 	        			</span>
-	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" />
+	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="orderInfo.address" ng-maxlength="30" />
 	        		</div>
-	        		<div ng-hide="userForm.address.$pristine">
-	        			<div class="alert alert-danger" ng-show="userForm.address.$error.required">
+	        		<div ng-hide="orderForm.address.$pristine">
+	        			<div class="alert alert-danger" ng-show="orderForm.address.$error.required">
 	        				收货地址必填
 	        			</div>
-	        			<div class="alert alert-danger" ng-show="!userForm.address.$error.pattern">
+	        			<div class="alert alert-danger" ng-show="orderForm.address.$error.pattern">
 	        				收货地址不能含有特殊字符，比如!@#$%^+&*< >《》?~\|""'';:`·
 	        			</div>
-	        			<div class="alert alert-danger" ng-show="userForm.address.$error.maxlength">
+	        			<div class="alert alert-danger" ng-show="orderForm.address.$error.maxlength">
 	        				收货地址过长，最多30个字符
 	        			</div>
 	        		</div>
 	        	</div>
 	        </form>
 	        <div class="clearfix">
-	        	<span class="pull-right total-money">订单总价: <span class="money">100</span>元</span>
+	        	<span class="pull-right total-money">订单总价: <span class="money">{{orderInfo.price * orderInfo.count ? orderInfo.price * orderInfo.count : 0}}</span>元</span>
 	        </div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-	        <button type="button" class="btn btn-primary" ng-click="confirmOrder()">确认</button>
+	        <button type="button" class="btn btn-primary" ng-click="addOrder()" ng-disabled="orderForm.$invalid">加入订单</button>
+	        <button type="button" class="btn btn-danger" ng-disabled="orderForm.$invalid">下单付款</button>
 	      </div>
 	    </div>
 	  </div>

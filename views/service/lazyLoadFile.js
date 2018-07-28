@@ -69,12 +69,5 @@ angular.module('app')
 				'template/product/product.css',
 				'template/product/productController.js'
 			]
-		},
-		{
-			name: 'editorder',
-			files: [
-				'template/editorder/editorder.css',
-				'template/editorder/editorderController.js'
-			]
 		}
 	]);

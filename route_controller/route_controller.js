@@ -707,6 +707,96 @@ class RouteController {
 			})
 	}
 
+	//加入订单
+	addOrderController(req, res) {
+			api.findOne('User', ['id', 'username', 'phone', 'auth', 'status', 'primaryRelationship', 'secondaryRelationship'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						if (result.dataValues.auth == 3) {
+							//查找该总代理是否存在该分销商
+							api.findOne('User', ['id', 'username', 'phone', 'primaryRelationship', 'secondaryRelationship'], {
+								phone: req.body.phone,
+								username: req.body.receive,
+								primaryRelationship: result.dataValues.id,
+								auth: 4
+							})
+							.then(result => {
+								if (result && result.dataValues) {
+
+									if (result.dataValues.status == 0) {
+										res.json({msg: '该分销商已被禁用，无法下单', code: 8001});
+									} else {
+										let primaryRelationship = result.dataValues.primaryRelationship;
+										let secondaryRelationship = result.dataValues.secondaryRelationship;
+										let id = result.dataValues.id;
+										api.max('Order', 'orderNo')
+											.then(max => {
+												let year = new Date().getFullYear();
+												let orderNo = config.orderNoOptions.flag + year;
+												if (!max) {
+													//如果订单号不存在
+													orderNo += '0000000001';
+												} else {
+													//如果订单号存在
+													let no = (+max.slice(orderNo.length) + 1).toString();
+													let strNO = no;
+													for (let i = 0; i < config.orderNoOptions.length - no.length; i++) {
+														strNO = '0' + strNO;
+													}
+													orderNo += strNO;
+												}
+
+												api.create('Order', {
+													orderNo,
+													productNo: req.body.productNo,
+													name: req.body.productName,
+													price: req.body.price,
+													count: req.body.count,
+													uid: id,
+													address: req.body.address,
+													status: 0,
+													primaryRelationship,
+													secondaryRelationship
+												})
+													.then(result => {
+														res.json({msg: '创建订单成功', code: 9000});
+													})
+													.catch(err => {
+														res.json(common.server.error);
+													})
+												
+											})
+											.catch(err => {
+												res.json(common.server.error);
+											})
+									}
+
+								} else {
+									res.json({msg: '不存在该分销商，请核对分销商姓名和手机号', code: 8002});
+								}
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+						} else {
+							res.json(common.auth.fail);
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+				
+			})
+			.catch(err => {
+				console.log('modifyPwdController出错了');
+				res.json(common.server.error);
+			})
+	}
+
 }
 
 module.exports = new RouteController();

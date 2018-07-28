@@ -52,4 +52,6 @@ module.exports = function (app) {
 
 	app.post('/modifypwd', routeController.modifyPwdController);
 
+	app.put('/addorder', routeController.addOrderController);
+
 }

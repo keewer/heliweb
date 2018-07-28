@@ -19,7 +19,9 @@ angular.module('app')
 
 				hideLoading: function () {
 					var loading = document.getElementById('loading');
-					document.body.removeChild(loading);
+					if (loading) {
+						document.body.removeChild(loading);
+					}
 				}
 			}
 

@@ -49,6 +49,10 @@ class API {
 		return sql.create(modelName, o);
 	}
 
+	//获取最大值
+	max(modelName, field) {
+		return sql.max(modelName, field);
+	}
 
 }
 
