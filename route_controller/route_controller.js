@@ -454,25 +454,38 @@ class RouteController {
 	}
 
 	addProductController(req, res) {
-		api.create('Product', {
-			productNo: req.body.productNo,
-			name: req.body.name,
-			price: req.body.price,
-			firstLevel: req.body.firstlevel,
-			secondLevel: req.body.secondlevel,
-			thirdLevel: req.body.thirdlevel,
-		})
-		.then(result => {
-			if (result && result.dataValues) {
-				res.send(common.add.success);
-			} else {
-				res.send(common.add.fail);
-			}
-			
-		})
-		.catch(err => {
-			res.json(common.add.fail);
-		})
+
+		api.findOne('Product', ['productNo', 'name'], {productNo: req.body.productNo})
+			.then(result => {
+				if (result && result.dataValues) {
+					res.json({msg: `该商品编号已存在，${result.dataValues.productNo}：${result.dataValues.name}`, code: 3000});
+				} else {
+					api.create('Product', {
+						productNo: req.body.productNo,
+						name: req.body.name,
+						price: req.body.price,
+						firstLevel: req.body.firstlevel,
+						secondLevel: req.body.secondlevel,
+						thirdLevel: req.body.thirdlevel,
+					})
+					.then(result => {
+						if (result && result.dataValues) {
+							res.json(common.add.success);
+						} else {
+							res.json(common.add.fail);
+						}
+						
+					})
+					.catch(err => {
+						res.json(common.server.error);
+					})
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+
+		
 	}
 
 	updateProductController(req, res) {
@@ -733,7 +746,7 @@ class RouteController {
 										let primaryRelationship = result.dataValues.primaryRelationship;
 										let secondaryRelationship = result.dataValues.secondaryRelationship;
 										let id = result.dataValues.id;
-										api.max('Order', 'orderNo')
+										api.max('Order', 'id')
 											.then(max => {
 												let year = new Date().getFullYear();
 												let orderNo = config.orderNoOptions.flag + year;
@@ -742,33 +755,42 @@ class RouteController {
 													orderNo += '0000000001';
 												} else {
 													//如果订单号存在
-													let no = (+max.slice(orderNo.length) + 1).toString();
-													let strNO = no;
-													for (let i = 0; i < config.orderNoOptions.length - no.length; i++) {
-														strNO = '0' + strNO;
-													}
-													orderNo += strNO;
-												}
-
-												api.create('Order', {
-													orderNo,
-													productNo: req.body.productNo,
-													name: req.body.productName,
-													price: req.body.price,
-													count: req.body.count,
-													uid: id,
-													address: req.body.address,
-													status: 0,
-													primaryRelationship,
-													secondaryRelationship
-												})
-													.then(result => {
-														res.json({msg: '创建订单成功', code: 9000});
-													})
-													.catch(err => {
-														res.json(common.server.error);
-													})
+													api.findOne('Order', ['orderNo'], {id: max})
+														.then(result => {
+															if (result && result.dataValues) {
+																let no = (+result.dataValues.orderNo.slice(orderNo.length) + 1).toString();
+																let strNO = no;
+																for (let i = 0; i < config.orderNoOptions.length - no.length; i++) {
+																	strNO = '0' + strNO;
+																}
+																orderNo += strNO;
+																api.create('Order', {
+																	orderNo,
+																	productNo: req.body.productNo,
+																	name: req.body.productName,
+																	price: req.body.price,
+																	count: req.body.count,
+																	uid: id,
+																	address: req.body.address,
+																	status: 0,
+																	primaryRelationship,
+																	secondaryRelationship
+																})
+																	.then(result => {
+																		res.json({msg: '创建订单成功', code: 9000});
+																	})
+																	.catch(err => {
+																		res.json(common.server.error);
+																	})
 												
+															} else {
+																res.json(common.server.error);
+															}
+														})
+														.catch(err => {
+															res.json(common.server.error);
+														})
+												}
 											})
 											.catch(err => {
 												res.json(common.server.error);
@@ -795,6 +817,11 @@ class RouteController {
 				console.log('modifyPwdController出错了');
 				res.json(common.server.error);
 			})
+	}
+
+	//查询订单数目
+	findOrderCountController() {
+		
 	}
 
 }

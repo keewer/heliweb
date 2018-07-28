@@ -4,4 +4,8 @@ angular.module('app')
 			$state.go(stateName, params);
 		}
 
+		$scope.openModal = function (id) {
+			$(id).modal();
+		}
+
 	}])

@@ -40,12 +40,13 @@ angular.module('app')
 
 				API.fetchPut('/addproduct', o)
 					.then(function (data) {
-						$('#addProduct').modal('hide');
-						$('#addProduct input').val('');
 						TIP.hideLoading();
-						
 						if (data.data.code == 7000) {
+							$('#addProduct').modal('hide');
+							$('#addProduct input').val('');
 							refresh();
+						} else if (data.data.code == 3000) {
+							TIP.openDialog(data.data.msg);
 						} else {
 							TIP.openDialog('录入商品失败');
 						}

@@ -70,12 +70,12 @@ angular.module('app')
 							//客服
 							$scope.list.push(list[1]);
 							$scope.list.push(list[4]);
-						} else if (data.data.auth == 3) {
+						} else if (data.data.auth == 3 || data.data.auth == 1) {
 							$scope.list.push(list[0]);
 							$scope.list.push(list[1]);
 							$scope.list.push(list[3]);
 							$scope.list.push(list[4]);
-						} else {
+						} else if (data.data.auth == 0) {
 							$scope.list = list;
 						}
 						var path = $location.path().slice(1);

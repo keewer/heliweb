@@ -16,8 +16,8 @@
 				</div>
 			</div>
 
-			<div class="pull-left add-btn" ng-if="authority === 1">
-				<button class="btn btn-primary" data-toggle="modal" data-target="#agent">添加总代理</button>
+			<div class="pull-left add-btn" ng-if="authority == 1">
+				<button class="btn btn-primary" ng-click="openModal('#agent')">添加总代理</button>
 			</div>
 		</div>
 	</div>
@@ -65,7 +65,7 @@
 
   </div>
 
-  <div id="agent" class="modal fade" ng-if="authority === 1">
+  <div id="agent" class="modal fade" ng-if="authority == 1">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">

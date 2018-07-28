@@ -61,6 +61,6 @@ exports.verifyIdcardOptions = {
 }
 
 exports.orderNoOptions = {
-	flag: 'HLXT',
+	flag: 'HLTX',
 	length: 10
 }
