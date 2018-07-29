@@ -12,6 +12,10 @@ angular.module('app')
 			thirdlevel: ''
 		};
 
+		$scope.promote = {
+			count: ''
+		}
+
 		$scope.setProduct = {
 			id: '',
 			name: '',
@@ -309,6 +313,95 @@ angular.module('app')
 					TIP.hideLoading();
 					TIP.openDialog('服务器报错');
 				})
+			}
+		}
+
+		//查询分销商升级为总代理条件数目
+		function selectCount() {
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc
+				};
+
+				API.fetchGet('/promotecount', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						if (data.data.code == 3000) {
+							$scope.promoteCount = data.data.data.promoteCount;
+						} else if (data.data.code == 3001) {
+							$scope.promoteCount = data.data.msg;
+						}
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
+			}
+		}
+
+		selectCount();
+
+		//设置分销商升级为总代理条件数目
+		$scope.setPromoteCount = function () {
+				var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc,
+					promoteCount: $scope.promote.count
+				};
+
+				API.fetchPost('/promote', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						console.log(data);
+						if (data.data.code == 3000) {
+							$scope.promoteCount = data.data.data.promoteCount;
+							$scope.promote.count = '';
+						} else if (data.data.code == 3001) {
+							TIP.openDialog(data.data.msg);
+						}
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
+			}
+		}
+
+
+		//修改分销商升级为总代理条件数目
+		$scope.modifyPromoteCount = function () {
+				var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc,
+					promoteCount: $scope.promote.count
+				};
+
+				API.fetchPost('/updatepromote', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						if (data.data.code == 3000) {
+							$scope.promoteCount = data.data.data;
+							$scope.promote.count = '';
+						} else if (data.data.code == 3001) {
+							TIP.openDialog(data.data.msg);
+						}
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
 			}
 		}
 

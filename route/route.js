@@ -62,4 +62,18 @@ module.exports = function (app) {
 
 	app.get('/findagentorder', routeController.findAgentOrderController);
 
+	app.post('/pay', routeController.payController);
+
+	app.post('/removeorder', routeController.removeOrderController);
+
+	app.post('/sendorder', routeController.sendOrderController);
+
+	app.post('/receiveorder', routeController.receiveOrderController);
+
+	app.get('/promotecount', routeController.promoteCountController);
+
+	app.post('/promote', routeController.promoteController);
+
+	app.post('/updatepromote', routeController.updatePromoteController);
+
 }

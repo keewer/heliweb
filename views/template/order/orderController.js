@@ -71,19 +71,9 @@ angular.module('app')
 					.then(function (data) {
 						TIP.hideLoading();
 						if (data.data.code == 3000) {
-							// if (data.data.auth != 3) {
-							// 	$state.go('login');
-							// } else {
-								
-							// }
-
 							$scope.authority = data.data.auth;
-								$scope.productList = data.data.data;
+							$scope.productList = data.data.data;
 						} 
-						// else if (data.data.code == 4001) {
-						// 	TIP.openDialog(data.data.msg);
-						// 	$state.go('login');
-						// }
 					})
 					.catch(function (err) {
 						TIP.hideLoading();
@@ -247,6 +237,125 @@ angular.module('app')
 			}
 		}
 
+		//付款
+		$scope.pay = function (item) {
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc,
+					id: item.id,
+					orderNo: item.orderNo
+				};
 
+				API.fetchPost('/pay', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						TIP.openDialog(data.data.msg);
+						if (data.data.code === 10000) {
+							item.status = data.data.status;
+						}
+						
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
+			}
+		}
+
+
+		//移除订单
+		$scope.removeOrder = function (item, index) {
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc,
+					id: item.id,
+					orderNo: item.orderNo
+				};
+
+				API.fetchPost('/removeorder', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						TIP.openDialog(data.data.msg);
+						if (data.data.code == 9000) {
+							item.status = data.data.status;
+							$scope.pageDataList.splice(index, 1);
+						}
+						
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
+			}
+		}
+
+		//客服发货
+		$scope.sendOrder = function (item) {
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc,
+					id: item.id,
+					orderNo: item.orderNo
+				};
+
+				API.fetchPost('/sendorder', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						TIP.openDialog(data.data.msg);
+						if (data.data.code == 10010) {
+							item.status = data.data.status;
+						}
+						
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
+			}
+		}
+
+		//总代理收货
+		$scope.receiveOrder = function (item) {
+			var _tVc = $cookies.get('_tVc');
+		  if (!_tVc) {
+				$state.go('login');
+			} else {
+				TIP.openLoading($scope);
+				var o = {
+					_tVc: _tVc,
+					id: item.id,
+					orderNo: item.orderNo
+				};
+
+				API.fetchPost('/receiveorder', o)
+					.then(function (data) {
+						TIP.hideLoading();
+						TIP.openDialog(data.data.msg);
+						if (data.data.code == 10020) {
+							item.status = data.data.status;
+
+							//查询当前分销商是否可以升级为总代理
+
+						}
+						
+					})
+					.catch(function (err) {
+						TIP.hideLoading();
+						TIP.openDialog('服务器报错');
+					})
+			}
+		}
 
 	}]);

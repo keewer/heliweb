@@ -63,6 +63,14 @@ class API {
 		return sql.query(s, o);
 	}
 
+	destroy(modelName, o) {
+		return sql.destroy(modelName, o);
+	}
+
+	transaction(fn) {
+		return sql.transaction(fn);
+	}
+
 }
 
 module.exports = new API();

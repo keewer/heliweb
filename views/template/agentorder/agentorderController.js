@@ -49,7 +49,7 @@ angular.module('app')
 				}
 				API.fetchGet('/findagentordercount', o)
 					.then(function (data) {
-						console.log('data ==> ', data);
+
 						TIP.hideLoading();
 						if (data.data.code == 3000) {
 							if (data.data.auth == 3) {
@@ -68,7 +68,7 @@ angular.module('app')
 
 							API.fetchGet('/findagentorder', query)
 							.then(function (data) {
-								console.log('data ==> ', data);
+
 								TIP.hideLoading();
 								if (data.data.code == 3000) {
 									data.data.data.forEach(function (v, i) {

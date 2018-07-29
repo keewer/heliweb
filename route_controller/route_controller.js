@@ -1021,6 +1021,278 @@ class RouteController {
 			})
 	}
 
+	//付款订单
+	payController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+
+						//只有总代理才可以付款
+						if (result.dataValues.auth == 3) {
+
+							//更新状态为待发货
+							api.update('Order', {
+								status: 1
+							}, {
+								id: req.body.id,
+								orderNo: req.body.orderNo
+							})
+							.then(result => {
+								if (result && Array.isArray(result)) {
+									res.json({msg: '付款成功', code: 10000, data: result, status: 1});
+								} else {
+									res.json({msg: '付款失败', code: 10001, data: result, status: 0});
+								}
+								
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+
+						} else {
+							res.json(common.auth.fail);
+						}
+
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//删除订单
+	removeOrderController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+
+						//只有总代理才可以删除
+						if (result.dataValues.auth == 3) {
+
+							//删除订单
+							api.destroy('Order', {
+								id: req.body.id,
+								orderNo: req.body.orderNo,
+								status: 0
+							})
+							.then(result => {
+								console.log(result);
+								res.json({msg: '删除成功', code: 9000, data: result, status: 4});
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+
+						} else {
+							res.json(common.auth.fail);
+						}
+
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//发货订单
+	sendOrderController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+
+						//只有客服才可以发货
+						if (result.dataValues.auth == 2) {
+
+							//更新状态为待收货2
+							api.update('Order', {
+								status: 2
+							}, {
+								id: req.body.id,
+								orderNo: req.body.orderNo
+							})
+							.then(result => {
+								if (result && Array.isArray(result)) {
+									res.json({msg: '发货成功', code: 10010, data: result, status: 2});
+								} else {
+									res.json({msg: '发货失败', code: 10011, data: result, status: 1});
+								}
+								
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+
+						} else {
+							res.json(common.auth.fail);
+						}
+
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//收货
+	receiveOrderController(req, res) {
+			api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+
+						//只有总代理才可以收货
+						if (result.dataValues.auth == 3) {
+
+							//更新状态为已收货3
+							api.update('Order', {
+								status: 3
+							}, {
+								id: req.body.id,
+								orderNo: req.body.orderNo
+							})
+							.then(result => {
+								if (result && Array.isArray(result)) {
+									res.json({msg: '收货成功', code: 10020, data: result, status: 3});
+								} else {
+									res.json({msg: '收货失败', code: 10021, data: result, status: 2});
+								}
+								
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+
+						} else {
+							res.json(common.auth.fail);
+						}
+
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询分销商升级为总代理条件数目
+	promoteCountController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						//只有总经理才可以设置
+						if (result.dataValues.auth == 0) {
+							api.findOne('Promote', ['promoteCount'], {id: 1})
+								.then(result => {
+									if (result && result.dataValues) {
+										res.json({msg: '查询成功', code: 3000, data: result.dataValues});
+									} else {
+										res.json({msg: '尚未设置', code: 3001, data: result});
+									}
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+	}
+
+	//设置分销商升级为总代理条件数目
+	promoteController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						//只有总经理才可以设置
+						if (result.dataValues.auth == 0) {
+							api.create('Promote', {promoteCount: req.body.promoteCount})
+								.then(result => {
+									if (result) {
+										res.json({msg: '添加成功', code: 3000, data: result});
+									} else {
+										res.json({msg: '添加失败', code: 3001});
+									}
+									
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+	}
+
+	//修改分销商升级为总代理条件数目
+	updatePromoteController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						//只有总经理才可以设置
+						if (result.dataValues.auth == 0) {
+							api.update('Promote', {promoteCount: req.body.promoteCount}, {id: 1})
+								.then(result => {
+
+									if (result) {
+										res.json({msg: '修改成功', code: 3000, data: req.body.promoteCount});
+									} else {
+										res.json({msg: '修改失败', code: 3001});
+									}
+									
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+	}
 
 }
 
