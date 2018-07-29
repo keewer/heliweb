@@ -57,7 +57,7 @@ angular.module('app')
 						if (data.data.auth == 0 || data.data.auth == 1) {
 							$state.go('home.usermanage');
 						} else if (data.data.auth == 2) {
-							$state.go('home.order');
+							$state.go('home.agentorder');
 						} else if (data.data.auth == 3) {
 							$state.go('home.distributor', {id: data.data.id});
 						} 

@@ -205,7 +205,8 @@ angular.module('app')
 									$('#agent').modal('hide');
 									$('#agent input').val('');
 									TIP.hideLoading();
-									TIP.openDialog(data.data.msg);
+									// TIP.openDialog(data.data.msg);
+									$scope.isSearch = true;
 								})
 								.catch(function (err) {
 									TIP.hideLoading();

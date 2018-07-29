@@ -21,7 +21,7 @@ angular.module('app')
 				name: '订单管理',
 				iconcls: 'fa-server',
 				licls: {'active-bg': false},
-				state: $scope.loginUserInfo.auth == 0 || $scope.loginUserInfo.auth == 1 ? 'home.agentorder' : 'home.order',
+				state: $scope.loginUserInfo.auth == 0 || $scope.loginUserInfo.auth == 1 || $scope.loginUserInfo.auth == 2 ? 'home.agentorder' : 'home.order',
 				url: 'agentorder@order'
 			},
 			{

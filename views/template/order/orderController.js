@@ -1,5 +1,5 @@
 angular.module('app')
-	.controller('orderController', ['$scope', '$state', '$cookies', '$timeout', '$compile', 'API', 'TIP', function ($scope, $state, $cookies, $timeout, $compile, API, TIP) {
+	.controller('orderController', ['$scope', '$state', '$cookies', '$timeout', '$compile', '$stateParams', 'API', 'TIP', function ($scope, $state, $cookies, $timeout, $compile, $stateParams, API, TIP) {
 
 		//权限
 		$scope.authority = -1;
@@ -65,20 +65,25 @@ angular.module('app')
 			} else {
 
 				TIP.openLoading($scope);
-				API.fetchGet('/findproductcount', {_tVc: _tVc})
+				API.fetchGet('/findproductcount', {
+					_tVc: _tVc
+				})
 					.then(function (data) {
 						TIP.hideLoading();
 						if (data.data.code == 3000) {
-							if (data.data.auth != 3) {
-								$state.go('login');
-							} else {
-								$scope.authority = data.data.auth;
+							// if (data.data.auth != 3) {
+							// 	$state.go('login');
+							// } else {
+								
+							// }
+
+							$scope.authority = data.data.auth;
 								$scope.productList = data.data.data;
-							}
-						} else if (data.data.code == 4001) {
-							TIP.openDialog(data.data.msg);
-							$state.go('login');
-						}
+						} 
+						// else if (data.data.code == 4001) {
+						// 	TIP.openDialog(data.data.msg);
+						// 	$state.go('login');
+						// }
 					})
 					.catch(function (err) {
 						TIP.hideLoading();
@@ -142,22 +147,26 @@ angular.module('app')
 			} else {
 				TIP.openLoading($scope);
 				var o = {
-					_tVc: _tVc
+					_tVc: _tVc,
+					id: $stateParams.id
 				};
 				if (orderNo) {
 					o.orderNo = orderNo;
 				}
+
 				API.fetchGet('/findordercount', o)
 					.then(function (data) {
+						TIP.hideLoading($scope);
 						if (data.data.code == 3000) {
-							if (data.data.auth == 2) {
+							if (data.data.auth == 3 && $stateParams.id != '') {
 								return $state.go('login');
 							}
 							$scope.option.all = Math.ceil(data.data.count / everyPageData);
 							var query = {
 								_tVc: _tVc,
 								offset: ($scope.option.curr - 1) * everyPageData, 
-								limit: everyPageData
+								limit: everyPageData,
+								id: $stateParams.id
 							};
 
 							if (orderNo) {

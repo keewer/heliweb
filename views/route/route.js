@@ -56,7 +56,7 @@ angular.module('app')
 				}
 			})
 			.state('home.order', {
-				url: '/order',
+				url: '/order/:id',
 				templateUrl: 'template/order/order.html',
 				controller: 'orderController',
 				resolve: {
