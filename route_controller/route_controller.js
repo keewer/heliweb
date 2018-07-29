@@ -889,23 +889,32 @@ class RouteController {
 					} else {
 						if (result.dataValues.auth == 3) {
 							let username = result.dataValues.username;
+							let auth = result.dataValues.auth;
+							let sql = '';
+							let o = {
+								primaryRelationship: result.dataValues.id,
+								offseting: Number(req.query.offset),
+								limiting: Number(req.query.limit)
+							};
+							if (req.query.orderNo) {
+								sql = "SELECT `u`.`username`, `u`.`phone`, `o`.* FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`uid` AND `o`.`primaryRelationship` = :primaryRelationship AND `o`.`orderNo` = :orderNo ORDER BY `o`.`id` DESC LIMIT :offseting, :limiting";
+								o.orderNo = req.query.orderNo;
+							} else {
+
+								sql = "SELECT `u`.`username`, `u`.`phone`, `o`.* FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`uid` AND `o`.`primaryRelationship` = :primaryRelationship ORDER BY `o`.`id` DESC LIMIT :offseting, :limiting";
+							}
 							//查询该总代理所有订单分页
 							//联表查询分销商姓名和手机号
-							let sql = "SELECT `u`.`username`, `u`.`phone`, `o`.* FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`uid` AND `o`.`primaryRelationship` = :primaryRelationship ORDER BY `o`.`id` DESC LIMIT :offseting, :limiting";
+							
 
-							api.query(sql, 
-								{
-									primaryRelationship: result.dataValues.id,
-									offseting: Number(req.query.offset),
-									limiting: Number(req.query.limit)
-								})
+							api.query(sql, o)
 								.then(result => {
 									if (result && Array.isArray(result)) {
 										result.forEach(v => {
 											v.agent = username;
 										})
 									}
-									res.json({msg: '查询成功', code: 3000, data: result});
+									res.json({msg: '查询成功', code: 3000, auth, data: result});
 								})
 								.catch(err => {
 									res.json(common.auth.fail);
@@ -924,6 +933,91 @@ class RouteController {
 			})
 		
 	}
+
+	//查询总代理订单数量
+	findAgentOrderCountController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						if (result.dataValues.auth == 3) {
+							res.json(common.auth.fail);
+						} else {
+							let auth = result.dataValues.auth;
+							let sql = "SELECT COUNT(`o`.`orderNo`) AS `count`, `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `u`.`auth` FROM `heli_order` AS `o` INNER JOIN `heli_user` AS `u` ON `o`.`primaryRelationship` = `u`.`id` GROUP BY `o`.`primaryRelationship`";
+
+							api.query(sql)
+								.then(result => {
+									if (result && Array.isArray(result)) {
+										res.json({msg: '查询成功', code: 3000, count: result.length, auth});
+									} else {
+										res.json({msg: '没有数据', code: 3001, auth});
+									}
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//分页查询总代理订单汇总
+	findAgentOrderController (req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						if (result.dataValues.auth == 3) {
+							res.json(common.auth.fail);
+						} else {
+							let auth = result.dataValues.auth;
+							let sql = '';
+							let o = {
+								offseting: Number(req.query.offset),
+								limiting: Number(req.query.limit)
+							};
+							if (req.query.name) {
+								o.username = req.query.name;
+								sql = "SELECT COUNT(`o`.`orderNo`) AS `count`, `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `u`.`auth` FROM `heli_order` AS `o` INNER JOIN `heli_user` AS `u` ON `o`.`primaryRelationship` = `u`.`id` AND `u`.`username` = :username GROUP BY `o`.`primaryRelationship` LIMIT :offseting, :limiting"
+							} else {
+								sql = "SELECT COUNT(`o`.`orderNo`) AS `count`, `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `u`.`auth` FROM `heli_order` AS `o` INNER JOIN `heli_user` AS `u` ON `o`.`primaryRelationship` = `u`.`id` GROUP BY `o`.`primaryRelationship` LIMIT :offseting, :limiting"
+							}
+
+							api.query(sql, o)
+								.then(result => {
+									if (result && Array.isArray(result)) {
+										res.json({msg: '查询成功', code: 3000, data: result, auth});
+									} else {
+										res.json({msg: '没有数据', code: 3001, auth});
+									}
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+						}
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
 
 }
 

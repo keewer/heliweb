@@ -8,8 +8,8 @@
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
-						<input class="form-control" type="text" name="search" placeholder="输入订单号..." ng-model="search.orderNo" />
-						<span class="input-group-addon searching">
+						<input class="form-control" type="text" name="search" placeholder="输入订单号..." ng-model="search.orderNo" ng-keydown="enterSearching($event)" />
+						<span class="input-group-addon searching" ng-click="searching()">
 							<i class="fa fa-search"></i>
 						</span>
 					</div>
@@ -49,18 +49,18 @@
 					<td>{{item.name}}</td>
 					<td>{{item.price}}</td>
 					<td>{{item.count}}</td>
-					<td>{{item.status === 0 ? '待付款' : item.status === 1 ? '已付款' : item.status === 2 ? '已发货' : item.status === 3 ? '已收货': '无效'}}</td>
+					<td>{{item.status == 0 ? '待付款' : item.status == 1 ? '待发货' : item.status == 2 ? '已发货' : item.status == 3 ? '已收货': '无效'}}</td>
 					<td>{{item.agent}}</td>
 					<td>{{item.username}}</td>
 					<td>{{item.phone}}</td>
 					<td>{{item.address}}</td>
 					<td>{{item.create_time}}</td>
 					<th>
-						<button class="btn btn-xs btn-success" ng-if="item.status === 0">付款</button>
-						<button class="btn btn-xs btn-danger" ng-if="item.status === 0">删除</button>
-						<button class="btn btn-xs btn-warning" ng-if="item.status === 1 || item.status === 2" ng-disabled="item.status === 1">确认收货</button>
-						<button class="btn btn-xs btn-defult" ng-if="item.status === 3" ng-disabled="item.status === 3">已完成</button>
-						<button class="btn btn-xs btn-info">订单反馈</button>
+						<button class="btn btn-xs btn-success" ng-if="item.status == 0">付款</button>
+						<button class="btn btn-xs btn-danger" ng-if="item.status == 0">删除</button>
+						<button class="btn btn-xs btn-warning" ng-if="item.status == 1 || item.status == 2" ng-disabled="item.status == 1">确认收货</button>
+						<button class="btn btn-xs btn-defult" ng-if="item.status == 3">已完成</button>
+						<button class="btn btn-xs btn-info" ng-if="item.status == 3">订单反馈</button>
 					</th>
 				</tr>
 			</tbody>

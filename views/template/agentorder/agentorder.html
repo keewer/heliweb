@@ -3,13 +3,13 @@
 		<div class="agentorder-title">订单管理/<span class="second-agentorder-title">总代理订单</span></div>
 		<div class="agentorder-operation">
 			<div class="pull-left show-all-data">
-				<button type="button" class="btn btn-primary">显示所有数据</button>
+				<button type="button" class="btn btn-primary" ng-disabled="!isSearch" ng-click="showAllData()">显示所有数据</button>
 			</div>
 			<div class="pull-left search">
 				<div class="form-group">
 					<div class="input-group">
-						<input class="form-control" type="text" name="search" placeholder="搜索总代理订单..." />
-						<span class="input-group-addon searching">
+						<input class="form-control" type="text" name="search" placeholder="输入总代理名称..." ng-model="search.name" ng-keydown="enterSearching($event)" />
+						<span class="input-group-addon searching" ng-click="searching()">
 							<i class="fa fa-search"></i>
 						</span>
 					</div>
@@ -23,9 +23,8 @@
 			<thead>
 				<tr>
 					<th>序号</th>
-					<th>商品编号</th>
-					<th>商品名称</th>
 					<th>总代理</th>
+					<th>手机号</th>
 					<th>订单数量</th>
 					<th>操作</th>
 				</tr>
@@ -33,25 +32,17 @@
 			<tbody>
 				<tr ng-repeat="item in pageDataList track by $index">
 					<td>{{item.num + 1}}</td>
-					<td>{{item.pcode}}</td>
-					<td>{{item.name}}</td>
-					<td>{{item.agent}}</td>
-					<td>{{item.orderCount}}</td>
-					<th>
-						<button class="btn btn-xs btn-success" ng-click="goState('home.order')">查看</button>
-					</th>
+					<td>{{item.username}}</td>
+					<td>{{item.phone}}</td>
+					<td>{{item.count}}</td>
+					<td>
+						<button class="btn btn-xs btn-success">查看</button>
+					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 
-	<div class="agentorder-pagination">
-		<ul class="pagination">
-	    <li ng-click="previousPage()"><span>上一页</span></li>
-	    <li ng-class="item.cls" ng-repeat="item in pageData track by $index" ng-click="togglePage(item, $index)"><span>{{item.count}}</span></li>
-	    <li ng-click="nextPage()"><span>下一页</span></li>
-	    <li><span>共{{pageCounts}}页</span></li>
-	  </ul>
-  </div>
+	<div id="pagination" class="agentorder-pagination"></div>
 
 </div>

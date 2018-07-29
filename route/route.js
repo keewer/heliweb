@@ -58,4 +58,8 @@ module.exports = function (app) {
 
 	app.get('/findorder', routeController.findOrderController);
 
+	app.get('/findagentordercount', routeController.findAgentOrderCountController);
+
+	app.get('/findagentorder', routeController.findAgentOrderController);
+
 }

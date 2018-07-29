@@ -209,8 +209,33 @@ angular.module('app')
 			document.getElementById('pagination').innerHTML = '';
 			isInit = true;
 			$scope.isSearch = false;
-			$scope.search.user = '';
+			$scope.search.orderNo = '';
 			initPage();
+		}
+
+		$scope.searching = function () {
+
+			$scope.search.orderNo = $scope.search.orderNo ? $scope.search.orderNo : '';
+
+			if (!$scope.search.orderNo.trim()) {
+				console.log('空');
+				return;
+			} else if (/[<>]+/.test($scope.search.orderNo)) {
+				TIP.openDialog('搜索用户不能含有< >符号');
+			} else {
+				$scope.option.curr = 1;
+				document.getElementById('pagination').innerHTML = '';
+				isInit = true;
+				$scope.isSearch = true;
+				initPage($scope.search.orderNo);
+			}
+			
+		}
+
+		$scope.enterSearching = function (e) {
+			if (e.keyCode == 13) {
+				$scope.searching();
+			}
 		}
 
 
