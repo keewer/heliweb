@@ -64,3 +64,7 @@ exports.orderNoOptions = {
 	flag: 'HLTX',
 	length: 10
 }
+
+exports.initPwdOptions = {
+	pwd: 'heli123'
+}

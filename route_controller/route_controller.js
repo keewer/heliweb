@@ -390,8 +390,12 @@ class RouteController {
 				if (result && result.dataValues) {
 
 					//被禁用者不可登录
-					if (result.dataValues.status === 0) {
+					if (result.dataValues.status == 0) {
 						return res.json(common.login.disabled);
+					}
+
+					if (result.dataValues.auth == 4) {
+						return res.json({msg: '该用户是分销商，无权限登录', code: 1010, auth: result.dataValues.auth});
 					}
 
 					let pwd = utils.addCrypto(req.body.pwd);
@@ -1157,7 +1161,7 @@ class RouteController {
 
 	//收货
 	receiveOrderController(req, res) {
-			api.findOne('User', ['status', 'auth'], {phone: req.phone})
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -1191,6 +1195,94 @@ class RouteController {
 							res.json(common.auth.fail);
 						}
 
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//收货时, 确认分销商是否能够升级总代理
+	promoteAgentController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						//查询升级总代理商品数量条件
+						//只有总代理才可以查询
+						if (result.dataValues.auth == 3) {
+
+							api.findOne('Promote', ['promoteCount'], {id: 1})
+								.then(result => {
+									if (result && result.dataValues) {
+										//统计当前分销商所有订单状态为3的数量
+										let promoteCount = result.dataValues.promoteCount
+										api.sum('Order', 'count', {
+											uid: req.body.uid,
+											status: 3
+										})
+										.then(result => {
+											let resulting = result;
+											//查找分销商是否升级为总代理, 如果升级则不需要不执行事务处理
+											api.findOne('User', ['auth'], {id: req.body.uid})
+												.then(result => {
+													if (result && result.dataValues) {
+														if (result.dataValues.auth == 4) {
+															if (resulting >= promoteCount) {
+																//升级为总代理, 修改职位为总代理, 初始化密码, 权限 = 3, 修改订单表的权限值
+																//开启事务处理
+																let pwd = utils.addCrypto(config.initPwdOptions.pwd);
+																api.transaction(t => {
+																	//事务处理
+																	return api.update('User', {pwd, auth: 3, position: '总代理'}, {id: req.body.uid}, {transaction: t})
+																		.then(() => {
+																			return api.update('Order', {auth: 3}, {uid: req.body.uid}, {transaction: t})
+																		})
+																})
+																.then(result => {
+																	res.json({msg: '查询成功', code: 3000, promoteCount, count: resulting, data: result, promote: true});
+																})
+																.catch(err => {
+																	res.json(common.server.error);
+																})
+
+															} else {
+																res.json({msg: '查询成功', code: 3000, promoteCount, count: result});
+															}
+														} else {
+															res.json({msg: '收货成功', code: 10020});
+														}
+													} else {
+														res.json(common.auth.fail)
+													}
+												})
+												.catch(err => {
+													res.json(common.server.error);
+												})
+
+											
+										})
+										.catch(err => {
+											res.json(common.server.error);
+										})
+										
+									} else {
+										res.json({msg: '系统升级总代理商品数量条件未设置', code: 5000});
+									}
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+
+						} else {
+							res.json(common.auth.fail);
+						}
 					}
 				} else {
 					res.json(common.auth.fail);

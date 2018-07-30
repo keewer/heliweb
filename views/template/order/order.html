@@ -49,7 +49,7 @@
 					<td>{{item.name}}</td>
 					<td>{{item.price}}</td>
 					<td>{{item.count}}</td>
-					<td>{{item.status == 0 ? '待付款' : item.status == 1 ? '待发货' : item.status == 2 ? '已发货' : item.status == 3 ? '已收货': '无效'}}</td>
+					<td ng-class="{success: item.status == 3}">{{item.status == 0 ? '待付款' : item.status == 1 ? '待发货' : item.status == 2 ? '已发货' : item.status == 3 ? '已收货': '无效'}}</td>
 					<td>{{item.rp}}</td>
 					<td>{{item.username}}</td>
 					<td>{{item.phone}}</td>
@@ -61,7 +61,6 @@
 						<button class="btn btn-xs btn-danger" ng-if="item.status == 0 && authority == 3" ng-click="removeOrder(item, $index)">删除</button>
 						<button class="btn btn-xs btn-danger" ng-if="item.status == 1 && authority == 2" ng-click="sendOrder(item)">发货</button>
 						<button class="btn btn-xs btn-warning" ng-if="item.status == 2 && authority == 3" ng-click="receiveOrder(item)">确认收货</button>
-						<button class="btn btn-xs btn-defult" ng-if="item.status == 3">已完成</button>
 						<button class="btn btn-xs btn-info" ng-if="item.status == 3 && authority == 3">订单反馈</button>
 						<button class="btn btn-xs btn-info" ng-if="item.status == 3">查看订单反馈</button>
 

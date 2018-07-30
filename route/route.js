@@ -76,4 +76,6 @@ module.exports = function (app) {
 
 	app.post('/updatepromote', routeController.updatePromoteController);
 
+	app.post('/promoteagent', routeController.promoteAgentController);
+
 }

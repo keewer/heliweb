@@ -45,6 +45,9 @@ angular.module('app')
 							$('#newOrder').modal('hide');
 							$('#newOrder input').val('');
 							$scope.isSearch = true;
+							for (var key in $scope.orderInfo) {
+								$scope.orderInfo[key] = '';
+							}
 						}
 					})
 					.catch(function (err) {
@@ -341,13 +344,22 @@ angular.module('app')
 
 				API.fetchPost('/receiveorder', o)
 					.then(function (data) {
-						TIP.hideLoading();
+						// TIP.hideLoading();
 						TIP.openDialog(data.data.msg);
 						if (data.data.code == 10020) {
 							item.status = data.data.status;
 
 							//查询当前分销商是否可以升级为总代理
-
+							o.uid = item.uid;
+							API.fetchPost('/promoteagent', o)
+								.then(function (data) {
+									console.log('promote agent data ==> ', data);
+									TIP.hideLoading();
+								})
+								.catch(function (err) {
+									TIP.hideLoading();
+									TIP.openDialog('服务器查询升级总代理过程出现错误');
+								})
 						}
 						
 					})

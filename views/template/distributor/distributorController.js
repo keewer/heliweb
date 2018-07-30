@@ -210,6 +210,9 @@ angular.module('app')
 									TIP.hideLoading();
 									// TIP.openDialog(data.data.msg);
 									$scope.isSearch = true;
+									for (var key in $scope.userInfo) {
+										$scope.userInfo[key] = '';
+									}
 								})
 								.catch(function (err) {
 									TIP.hideLoading();

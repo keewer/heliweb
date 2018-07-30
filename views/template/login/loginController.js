@@ -42,12 +42,12 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchPost('/login', o)
 				.then(function (data) {
-
+					console.log(data);
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
 						if (data.data.auth == 4) {
 							getImgCode();
-							TIP.openDialog('该用户是分销商，无权限登录');
+							TIP.openDialog(data.data.msg);
 							return;
 						}
 						var time = new Date().getTime() + 86400000;

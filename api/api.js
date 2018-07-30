@@ -22,10 +22,10 @@ class API {
 	}
 
 	//更新字段
-	update(modelName, attrs, condition) {
+	update(modelName, attrs, condition, t) {
 		//attrs ==> {id: 1, name: 2}
 		//condition ==> {id: 1}
-		return sql.update(modelName, attrs, condition);
+		return sql.update(modelName, attrs, condition, t);
 	}
 
 	//查询记录数
@@ -69,6 +69,10 @@ class API {
 
 	transaction(fn) {
 		return sql.transaction(fn);
+	}
+
+	sum(modelName, field, o) {
+		return sql.sum(modelName, field, o);
 	}
 
 }
