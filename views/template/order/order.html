@@ -38,7 +38,7 @@
 					<th>收货人(分销商)手机号</th>
 					<th>收货地址</th>
 					<th>订单日期</th>
-					<th>操作</th>
+					<th style="width: 100px;">操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -61,8 +61,7 @@
 						<button class="btn btn-xs btn-danger" ng-if="item.status == 0 && authority == 3" ng-click="removeOrder(item, $index)">删除</button>
 						<button class="btn btn-xs btn-danger" ng-if="item.status == 1 && authority == 2" ng-click="sendOrder(item)">发货</button>
 						<button class="btn btn-xs btn-warning" ng-if="item.status == 2 && authority == 3" ng-click="receiveOrder(item)">确认收货</button>
-						<button class="btn btn-xs btn-info" ng-if="item.status == 3 && authority == 3">订单反馈</button>
-						<button class="btn btn-xs btn-info" ng-if="item.status == 3">查看订单反馈</button>
+						<button class="btn btn-xs btn-info comment" ng-if="item.status == 3 && authority == 3" ng-click="comment(item)"><i></i>订单反馈</button>
 
 					</th>
 				</tr>
@@ -193,7 +192,6 @@
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 	        <button type="button" class="btn btn-primary" ng-click="addOrder()" ng-disabled="orderForm.$invalid">加入订单</button>
-	        <button type="button" class="btn btn-danger" ng-disabled="orderForm.$invalid">下单付款</button>
 	      </div>
 	    </div>
 	  </div>

@@ -738,7 +738,7 @@ class RouteController {
 					} else {
 						if (result.dataValues.auth == 3) {
 							//查找该总代理是否存在该分销商
-							api.findOne('User', ['id', 'username', 'phone', 'primaryRelationship', 'secondaryRelationship'], {
+							api.findOne('User', ['id', 'username', 'status', 'phone', 'primaryRelationship', 'secondaryRelationship'], {
 								phone: req.body.phone,
 								username: req.body.receive,
 								primaryRelationship: result.dataValues.id,

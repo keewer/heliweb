@@ -69,5 +69,12 @@ angular.module('app')
 				'template/product/product.css',
 				'template/product/productController.js'
 			]
+		},
+		{
+			name: 'comment',
+			files: [
+				'template/comment/comment.css',
+				'template/comment/commentController.js'
+			]
 		}
 	]);

@@ -105,6 +105,16 @@ angular.module('app')
 					}]
 				}
 			})
+			.state('home.comment', {
+				url: '/comment/:id/:orderNo',
+				templateUrl: 'template/comment/comment.html',
+				controller: 'commentController',
+				resolve: {
+					des: ['$ocLazyLoad', function ($ocLazyLoad) {
+						return $ocLazyLoad.load('comment');
+					}]
+				}
+			})
 			
 
 	}])

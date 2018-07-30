@@ -370,4 +370,10 @@ angular.module('app')
 			}
 		}
 
+		//查看订单反馈
+		$scope.comment = function (item) {
+			console.log(item);
+			$state.go('home.comment', {id: item.id, orderNo: item.orderNo});
+		}
+
 	}]);
