@@ -1,0 +1,59 @@
+.comment{
+	height: 100%;
+	overflow-y: auto;
+}
+.comment .comment-title{
+	font-size: 24px;
+}
+
+.comment .order-comment{
+	font-size: 18px;
+}
+
+.comment .ml{
+	margin-left: 30px;
+}
+
+.comment .order-info{
+	margin-top: 30px;
+	background-color: #efefef;
+	padding: 15px;
+}
+
+.comment .title-info{
+	font-size: 18px;
+}
+
+.comment .comment-content{
+	margin-top: 30px;
+}
+.comment .cc{
+	margin-top: 15px;
+	background-color: #fff;
+	padding: 15px;
+	max-width: 500px;
+	box-shadow: 2px 2px 6px 1px #ccc;
+}
+.comment .name{
+	font-size: 18px;
+}
+
+.comment .edit-comment{
+	max-width: 500px;
+	padding: 15px;
+	background-color: #fff;
+	margin-top: 15px;
+}
+
+.comment .edit-comment textarea{
+	height: 180px;
+	resize: none;
+}
+.comment .commit-comment{
+	margin-top: 15px;
+	margin-left: 15px;
+}
+
+.comment .record{
+	line-height: 39px;
+}

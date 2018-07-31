@@ -42,7 +42,6 @@ angular.module('app')
 			TIP.openLoading($scope);
 			API.fetchPost('/login', o)
 				.then(function (data) {
-					console.log(data);
 					TIP.hideLoading();
 					if (data.data.code == 1010) {
 						if (data.data.auth == 4) {

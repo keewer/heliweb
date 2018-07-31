@@ -1,3 +1,51 @@
 <div class="comment">
-	<h1>订单反馈</h1>
+	<div class="comment-title">
+		订单管理/
+		<span class="order-comment">订单反馈</span>
+	</div>
+	<div class="order-info">
+		<div class="clearfix">
+			<p class="pull-left title-info">订单编号：{{comments.order.orderNo}}</p>
+			<p class="pull-left ml">订单日期：{{comments.order.create_time | date: 'yyyy-MM-dd hh:mm:ss'}}</p>
+		</div>
+		<div>
+			<p>商品编号：{{comments.order.productNo}}</p>
+			<p>商品名称：{{comments.order.name}}</p>
+			<p>商品价格：{{comments.order.price}}</p>
+			<p>商品数量：{{comments.order.count}}</p>
+			<p>总代理：{{comments.order.agent}}</p>
+			<p>收货人(分销商)：{{comments.order.username}}</p>
+			<p>收货人(分销商)手机号：{{comments.order.phone}}</p>
+			<p>收货地址：{{comments.order.address}}</p>
+			<p>订单总价：{{comments.order.price * comments.order.count}}</p>
+			<button type="button" class="btn btn-warning" ng-disabled="isComment" ng-click="comment()">立即反馈</button>
+		</div>
+		<div class="edit-comment" ng-show="isComment">
+			<form name="commemtForm" novalidate>
+				<textarea class="form-control" ng-model="commentInfo.content" maxlength="120" placeholder="输入反馈内容(最多120字符)..." ng-required="true"></textarea>
+				<div class="clearfix">
+					<div class="clearfix pull-right">
+						<button class="btn btn-default pull-left commit-comment" ng-click="cancelComement()">取消</button>
+						<button class="btn btn-primary pull-left commit-comment" ng-click="commitComment()" ng-disabled="commemtForm.$invalid">提交</button>
+					</div>
+				</div>
+			</form>
+			
+			
+		</div>
+		<div class="comment-content">
+			<div class="clearfix">
+				<h4 class="pull-left">订单反馈内容</h4>
+				<div class="pull-left ml record">共 {{comments.contents.length}} 条反馈</div>
+			</div>
+			
+			<div class="cc" ng-repeat="item in comments.contents track by $index">
+				<div class="clearfix">
+					<p class="pull-left">{{item.create_time | date: 'yyyy-MM-dd hh:mm:ss'}}</p>
+					<p class="pull-left ml"><span class="name">{{item.username}}</span> 反馈说</p>
+				</div>
+				<div class="comment-content-detail">{{item.content}}</div>
+			</div>
+		</div>
+	</div>
 </div>

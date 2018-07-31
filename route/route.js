@@ -78,4 +78,10 @@ module.exports = function (app) {
 
 	app.post('/promoteagent', routeController.promoteAgentController);
 
+	app.put('/addcomment', routeController.addCommentController);
+
+	app.get('/findcomment', routeController.findCommentController);
+
+	app.get('/findorderdata', routeController.findOrderDataController);
+
 }

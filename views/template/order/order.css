@@ -65,11 +65,11 @@
 	margin-right: 15px;
 }
 
-.order .comment{
+.order .commenting{
 	position: relative;
 }
 
-.order .comment i{
+.order .commenting i{
 	position: absolute;
 	right: -4px;
 	top: -4px;

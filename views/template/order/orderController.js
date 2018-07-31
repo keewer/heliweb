@@ -168,7 +168,6 @@ angular.module('app')
 
 							API.fetchGet('/findorder', query)
 							.then(function (data) {
-								console.log('data ==> ', data);
 								TIP.hideLoading();
 								if (data.data.code == 3000) {
 									data.data.data.forEach(function (v, i) {
@@ -372,7 +371,6 @@ angular.module('app')
 
 		//查看订单反馈
 		$scope.comment = function (item) {
-			console.log(item);
 			$state.go('home.comment', {id: item.id, orderNo: item.orderNo});
 		}
 

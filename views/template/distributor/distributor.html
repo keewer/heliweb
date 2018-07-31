@@ -53,7 +53,6 @@
 					<th>
 						<button class="btn btn-xs btn-warning" ng-if="item.status == 0 && authority == 3" ng-click="changeStatus(item)">启用</button>
 						<button class="btn btn-xs btn-danger" ng-if="item.status == 1 && authority == 3" ng-click="changeStatus(item)">禁用</button>
-						<button class="btn btn-xs btn-default" ng-if="authority != 3" ng-disabled="true">无权限</button>
 					</th>
 				</tr>
 			</tbody>

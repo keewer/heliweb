@@ -12,8 +12,8 @@ class API {
 		return sql.findOne(modelName, attrs, o);
 	}
 
-	findOne(modelName, attrs, o){
-		return sql.findOne(modelName, attrs, o);
+	findOne(modelName, attrs, o, t){
+		return sql.findOne(modelName, attrs, o, t);
 	}
 
 	//分页查询
@@ -35,13 +35,12 @@ class API {
 
 	//分页查询最新数据
 	findAll(modelName, attrs, o, offset, limit, order) {
-		return model[modelName].findAll({
-			attributes: attrs,
-			where: o,
-			offset: offset,
-			limit: limit,
-			order: order
-		});
+		return sql.findAll(modelName, attrs, o, offset, limit, order);
+	}
+
+	//查询所有数据
+	findAlling(modelName, attrs, o, t) {
+		return sql.findAlling(modelName, attrs, o, t);
 	}
 
 	//添加数据

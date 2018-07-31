@@ -1321,6 +1321,9 @@ class RouteController {
 					res.json(common.auth.fail);
 				}
 			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
 	}
 
 	//设置分销商升级为总代理条件数目
@@ -1351,6 +1354,9 @@ class RouteController {
 				} else {
 					res.json(common.auth.fail);
 				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
 			})
 	}
 
@@ -1383,6 +1389,195 @@ class RouteController {
 				} else {
 					res.json(common.auth.fail);
 				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//添加订单反馈
+	addCommentController(req, res) {
+		api.findOne('User', ['id', 'username', 'status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						//根据订单id和订单编号查询订单信息
+						//开启事务
+						let id = result.dataValues.id;
+						let username = result.dataValues.username;
+						let auth = result.dataValues.auth;
+						api.transaction(t => {
+							//查询订单信息
+							return api.findOne('Order', ['id', 'uid', 'orderNo', 'productNo', 'name', 'price', 'count', 'address', 'primaryRelationship'], {id: req.body.id, orderNo: req.body.orderNo, status: 3}, t)
+								.then(order => {
+									
+									//查询该订单的总代理
+									return api.findOne('User', ['username'], {id: order.dataValues.primaryRelationship}, t)
+										.then(user => {
+
+											//查询该订单分销商
+											return api.findOne('User', ['username', 'phone'], {id: order.dataValues.uid}, t)
+												.then(u => {
+
+													//执行插入记录
+													let o = {
+														orderNo: order.dataValues.orderNo,
+														oid: order.dataValues.id,
+														agent: user.dataValues.username,
+														distributor: u.dataValues.username,
+														phone: u.dataValues.phone,
+														content: req.body.content,
+														username,
+														uid: id
+													};
+
+													if (auth == 0) {
+														o.zoreAuth = 0;
+														o.oneAuth = 1;
+														o.twoAuth = 1;
+														o.threeAuth = 1;
+													} else if (auth == 1) {
+														o.zoreAuth = 1;
+														o.oneAuth = 0;
+														o.twoAuth = 1;
+														o.threeAuth = 1;
+													} else if (auth == 2) {
+														o.zoreAuth = 1;
+														o.oneAuth = 1;
+														o.twoAuth = 0;
+														o.threeAuth = 1;
+													} else if (auth == 3) {
+														o.zoreAuth = 1;
+														o.oneAuth = 1;
+														o.twoAuth = 1;
+														o.threeAuth = 0;
+													}
+													return api.create('Comment', o, {transaction: t})
+														.then(c => {
+															return c;
+														})
+
+												})
+											
+										})
+								})
+						})
+							.then(result => {
+								res.json({data: result});
+							})
+							.catch(err => {
+								res.json(common.auth.fail);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询订单反馈内容
+	findCommentController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						let authKey = '';
+						if (auth == 0) {
+							authKey = 'zoreAuth';
+						} else if (auth == 1) {
+							authKey = 'oneAuth';
+						} else if (auth == 2) {
+							authKey = 'twoAuth';
+						} else if (auth == 3) {
+							authKey = 'threeAuth';
+						}
+						//启动事务
+						api.transaction(t => {
+							//查询该订单的反馈
+							return api.findAlling('Comment', ['orderNo', 'oid', 'username', 'content', 'create_time'], {oid: req.query.id, orderNo: req.query.orderNo}, t)
+									.then(c => {
+										let o = {
+											contents: []
+										};
+										if (c && Array.isArray(c)) {
+											c.forEach(v => {
+												o.contents.push(v.dataValues);
+											})
+										}
+										return api.update('Comment', {[authKey]: 0}, {oid: req.query.id, orderNo: req.query.orderNo}, {transaction: t})
+											.then(uc => {
+												return o;
+											})
+									})
+							})
+						.then(result => {
+							res.json({data: result});
+						})
+						.catch(err => {
+							res.json(common.server.error);
+						})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询反馈订单信息
+	findOrderDataController(req, res) {
+			api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						//启动事务
+						api.transaction(t => {
+							return api.findOne('Order', ['id', 'uid', 'orderNo', 'productNo', 'name', 'price', 'count', 'address', 'primaryRelationship', 'create_time'], {id: req.query.id, orderNo: req.query.orderNo}, t)
+								.then(order => {
+									
+									return api.findOne('User', ['username'], {id: order.dataValues.primaryRelationship}, t)
+										.then(user => {
+											order.dataValues.agent = user.dataValues.username;
+
+											return api.findOne('User', ['username', 'phone'], {id: order.dataValues.uid}, t)
+												.then(u => {
+													order.dataValues.username = u.dataValues.username;
+													order.dataValues.phone = u.dataValues.phone;
+
+													return order;
+												})
+										})
+
+								})
+						})
+							.then(result => {
+								res.json({data: result});
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
 			})
 	}
 

@@ -22,7 +22,7 @@ angular.module('app')
 				iconcls: 'fa-server',
 				licls: {'active-bg': false},
 				state: $scope.loginUserInfo.auth == 0 || $scope.loginUserInfo.auth == 1 || $scope.loginUserInfo.auth == 2 ? 'home.agentorder' : 'home.order',
-				url: 'agentorder@order'
+				url: 'agentorder@order@comment'
 			},
 			{
 				name: '商品管理',
