@@ -154,7 +154,9 @@ angular.module('app')
 							if (data.data.auth == 3 && $stateParams.id != '') {
 								return $state.go('login');
 							}
+
 							$scope.option.all = Math.ceil(data.data.count / everyPageData);
+							
 							var query = {
 								_tVc: _tVc,
 								offset: ($scope.option.curr - 1) * everyPageData, 
@@ -170,9 +172,13 @@ angular.module('app')
 							.then(function (data) {
 								TIP.hideLoading();
 								if (data.data.code == 3000) {
+
+									//取出所有单号
+									// var orderNos = [];
 									data.data.data.forEach(function (v, i) {
 										v.num = i + ($scope.option.curr - 1) * everyPageData;
 										v.create_time = new Date(v.create_time).formatDate('yyyy-MM-dd hh:mm:ss');
+										// orderNos.unshift(v.orderNo);
 									})
 									$scope.pageDataList = data.data.data;
 									$scope.authority = data.data.auth;
@@ -228,6 +234,7 @@ angular.module('app')
 				document.getElementById('pagination').innerHTML = '';
 				isInit = true;
 				$scope.isSearch = true;
+				console.log($scope.search.orderNo);
 				initPage($scope.search.orderNo);
 			}
 			
@@ -249,7 +256,8 @@ angular.module('app')
 				var o = {
 					_tVc: _tVc,
 					id: item.id,
-					orderNo: item.orderNo
+					orderNo: item.orderNo,
+					money: item.price * item.count
 				};
 
 				API.fetchPost('/pay', o)

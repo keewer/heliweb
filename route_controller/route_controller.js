@@ -866,7 +866,15 @@ class RouteController {
 							id = req.query.id;
 						}
 
-						api.count('Order', {primaryRelationship: id})
+						let o = {
+							primaryRelationship: id
+						};
+
+						if (req.query.orderNo) {
+							o.orderNo = req.query.orderNo;
+						}
+
+						api.count('Order', o)
 							.then(result => {
 								res.json({msg: '查询成功', code: 3000, auth: auth, count: result, currentId});
 							})
@@ -1037,10 +1045,12 @@ class RouteController {
 
 						//只有总代理才可以付款
 						if (result.dataValues.auth == 3) {
-
+							let payTime = utils.formatDate(new Date());
 							//更新状态为待发货
 							api.update('Order', {
-								status: 1
+								status: 1,
+								payTime,
+								money: req.body.money
 							}, {
 								id: req.body.id,
 								orderNo: req.body.orderNo
@@ -1125,10 +1135,11 @@ class RouteController {
 
 						//只有客服才可以发货
 						if (result.dataValues.auth == 2) {
-
+							let sendTime = utils.formatDate(new Date());
 							//更新状态为待收货2
 							api.update('Order', {
-								status: 2
+								status: 2,
+								sendTime
 							}, {
 								id: req.body.id,
 								orderNo: req.body.orderNo
@@ -1171,10 +1182,11 @@ class RouteController {
 
 						//只有总代理才可以收货
 						if (result.dataValues.auth == 3) {
-
+							let receiveTime = utils.formatDate(new Date());
 							//更新状态为已收货3
 							api.update('Order', {
-								status: 3
+								status: 3,
+								receiveTime
 							}, {
 								id: req.body.id,
 								orderNo: req.body.orderNo

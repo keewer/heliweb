@@ -24,3 +24,13 @@ Date.prototype.formatDate = function (format) {
 
   return format;
 }
+
+Array.prototype.finding = function (val) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == val) {
+      return true;
+    }
+  }
+
+  return false;
+}

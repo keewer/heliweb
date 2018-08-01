@@ -1,31 +1,31 @@
 <div class="data">
 	<div class="data-top">
 			<div class="data-title">数据统计</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">商品名称:</div>
-				<div class="start-date pull-left">
-					<select class="form-control">
-						<option>天香鸡</option>
-					</select>
+			<form name="dataForm" novalidate class="pull-left clearfix">
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">商品名称:</div>
+					<div class="start-date pull-left">
+						<select class="form-control" name="name" ng-model="dataInfo.id" ng-options="item.id as item.name for item in productList" ng-required="true" ng-change="selectProduct(dataInfo.id)">
+						</select>
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">开始日期:</div>
-				<div class="start-date pull-left">
-					<input class="form-control" type="date" name="starttime" />
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">开始日期:</div>
+					<div class="start-date pull-left">
+						<input class="form-control" type="month" name="starttime" ng-model="dataInfo.startDate" ng-required="true" />
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<div class="pull-left start-date-title">结束日期:</div>
-				<div class="start-date pull-left">
-					<input class="form-control" type="date" name="endtime" />
+				<div class="pull-left date">
+					<div class="pull-left start-date-title">结束日期:</div>
+					<div class="start-date pull-left">
+						<input class="form-control" type="month" name="endtime" ng-model="dataInfo.endDate" ng-required="true" />
+					</div>
 				</div>
-			</div>
-			<div class="pull-left date">
-				<button class="btn btn-primary" ng-click="generateChart()">生成数据</button>
-				<button class="btn btn-danger" ng-click="clearChart()">清除数据</button>
-			</div>
-			
+				<div class="pull-left date">
+					<button class="btn btn-primary" ng-click="generateChart()" ng-disabled="dataForm.$invalid">生成数据</button>
+					<button class="btn btn-danger" ng-click="clearChart()" ng-disabled="!isShowData">清除数据</button>
+				</div>
+			</form>
 	</div>
 	<div id="chart" class="data-content">
 		
