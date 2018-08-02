@@ -84,4 +84,6 @@ module.exports = function (app) {
 
 	app.get('/findorderdata', routeController.findOrderDataController);
 
+	app.get('/datastatistics', routeController.dataStatisticsController);
+
 }

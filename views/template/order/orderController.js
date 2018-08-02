@@ -360,7 +360,7 @@ angular.module('app')
 							o.uid = item.uid;
 							API.fetchPost('/promoteagent', o)
 								.then(function (data) {
-									console.log('promote agent data ==> ', data);
+									
 									TIP.hideLoading();
 								})
 								.catch(function (err) {

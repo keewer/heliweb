@@ -49,6 +49,9 @@ angular.module('app')
 							$('#addProduct').modal('hide');
 							$('#addProduct input').val('');
 							refresh();
+							for (var key in $scope.product) {
+								$scope.product[key] = '';
+							}
 						} else if (data.data.code == 3000) {
 							TIP.openDialog(data.data.msg);
 						} else {

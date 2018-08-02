@@ -1593,6 +1593,59 @@ class RouteController {
 			})
 	}
 
+	//数据统计
+	dataStatisticsController(req, res) {
+		api.findOne('User', ['id', 'status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let auth = result.dataValues.auth;
+						let attrs = ['id', 'orderNo', 'productNo', 'name', 'price', 'count', 'money', 'receiveTime'];;
+						let o = {
+							productNo: req.query.productNo, 
+							$and: [
+								{receiveTime: {$gte: req.query.start}},
+								{receiveTime: {$lte: req.query.end}}
+							],
+							status: 3
+						};
+						if (auth == 3) {
+							//总代理
+							o.primaryRelationship = result.dataValues.id;
+							
+						} else if (auth == 2) {
+							//其他
+							return res.json(ommon.auth.fail);
+						}
+
+						//013查询
+						api.findAlling('Order', attrs, o)
+							.then(result => {
+								let data = [];
+								if (result && Array.isArray(result)) {
+									result.forEach(v => {
+										data.push(v.dataValues);
+									})
+								}
+								res.json({msg: '查询成功', code: 3000, data});
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
 }
 
 module.exports = new RouteController();

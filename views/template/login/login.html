@@ -8,7 +8,7 @@
 					<span class="input-group-addon">
 						<i class="fa fa-mobile fa-lg"></i>
 					</span>
-					<input class="form-control" type="text" name="phone" autocomplete="off" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" placeholder="手机号" />
+					<input class="form-control" type="text" name="phone" autocomplete="off" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" placeholder="手机号" maxlength="11" />
 				</div>
 
 				<div ng-hide="userForm.phone.$pristine">

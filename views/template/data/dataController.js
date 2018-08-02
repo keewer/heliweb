@@ -8,7 +8,7 @@ angular.module('app')
 		$scope.isShowData = false;
 
 		$scope.dataInfo = {
-			id: '',
+			productNo: '',
 			startDate: '',
 			endDate: ''
 		}
@@ -67,8 +67,30 @@ angular.module('app')
 						end += 30 + ' 23:59:59';
 					}
 
-					console.log('start ==> ', start);
-					console.log('end ==> ', end);
+					//发送查询请求
+					var _tVc = $cookies.get('_tVc');
+				  if (!_tVc) {
+						$state.go('login');
+					} else {
+						var o = {
+							_tVc: _tVc,
+							productNo: $scope.dataInfo.productNo,
+							start: start,
+							end: end
+						};
+
+						TIP.openLoading($scope);
+						//发送请求
+						API.fetchGet('/datastatistics', o)
+							.then(function (data) {
+								TIP.hideLoading($scope);
+								console.log(data);
+							})
+							.catch(function (err) {
+								TIP.hideLoading($scope);
+								TIP.openDialog('服务器报错');
+							})
+					}
 
 				}
 			}
@@ -82,10 +104,6 @@ angular.module('app')
 			chart.clearChart(chartInstance);
 		}
 
-		$scope.selectProduct = function (productId) {
-			console.log(productId);
-		}
-
 		//获取产品信息
 		function init() {
 			var _tVc = $cookies.get('_tVc');
@@ -96,6 +114,7 @@ angular.module('app')
 				TIP.openLoading($scope);
 				API.fetchGet('/findproductcount', {_tVc: _tVc})
 					.then(function (data) {
+						console.log(data);
 						TIP.hideLoading();
 						if (data.data.code == 3000) {
 							if (data.data.auth == 2) {
