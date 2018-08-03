@@ -205,10 +205,13 @@ angular.module('app')
 							}
 							API.fetchPost('/adduser', o)
 								.then(function (data) {
+									TIP.hideLoading();
+									if (data.data.code == 5001) {
+										TIP.openDialog(data.data.msg);
+										return;
+									}
 									$('#agent').modal('hide');
 									$('#agent input').val('');
-									TIP.hideLoading();
-									// TIP.openDialog(data.data.msg);
 									$scope.isSearch = true;
 									for (var key in $scope.userInfo) {
 										$scope.userInfo[key] = '';

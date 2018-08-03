@@ -13,12 +13,9 @@
 .data .data-pagination li{
 	cursor: pointer;
 }
-.data .data-top{
-	height: 50px;
-}
 
-.data .data-top>.data-title{
-	float: left;
+.data .form-data{
+	margin: 15px 0;
 }
 
 .data .add-btn{
@@ -56,5 +53,5 @@
 }
 
 .data .data-content{
-	height: calc(100% - 50px);
+	height: calc(100% - 114px);
 }

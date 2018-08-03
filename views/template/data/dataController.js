@@ -26,11 +26,14 @@ angular.module('app')
 			if (startYear > endYear) {
 				TIP.openDialog('开始年份不能大于结束年份');
 			} else {
-				//计算月份时间差
+				//计算月份差
 				var ym = (endYear - startYear) * 12;
 				var mm = endMonth - startMonth + 1;
 
-				if ((ym + mm) > 12) {
+				//查询多少个月数据
+				var totalMonth = ym + mm;
+
+				if (totalMonth > 12) {
 					TIP.openDialog('不能查询超过12个月数据');
 				} else {
 					//开始时间始终是 yyyy-MM-01 00:00:00
@@ -84,11 +87,56 @@ angular.module('app')
 						API.fetchGet('/datastatistics', o)
 							.then(function (data) {
 								TIP.hideLoading($scope);
-								console.log(data);
+								if (data.data.code == 3000) {
+									var datas = data.data.data;
+									if (datas.length == 0) {
+										TIP.openDialog('没有数据');
+										return;
+									}
+									//生成该时间年月数组
+									var monthData = [];
+									for (var i = 0; i < totalMonth; i++) {
+										var d = startMonth + i;
+										if (d > 12) {
+											d = startMonth + i - 12;
+											monthData.push(startYear + 1 + '-' + (d >= 10 ? d : '0' + d));
+										} else {
+											monthData.push(startYear + '-' + (d >= 10 ? d : '0' + d));
+										}
+									}
+
+									//统计后台返回数据, 将相同年份月份数据求和
+									var allData = [];
+									var allCount = 0;
+									var allMoney = 0
+									for (var j = 0; j < monthData.length; j++) {
+										var count = 0;
+										for (var k = 0; k < datas.length; k++) {
+											if (datas[k].receiveTime.indexOf(monthData[j]) > -1) {
+												count += datas[k].count;
+											}
+
+											if (j == 0) {
+												allMoney += datas[k].money;
+											}
+										}
+
+										//累加总量
+										allCount += count;
+
+										//加入allData
+										allData.push(count);
+									}
+
+									//展示统计数据
+									chartInstance = chart.generateChart('chart', datas[0].productNo + '：' + datas[0].name +'销量总量 ' + allCount + '   销售总额 ' + allMoney, monthData, allData);
+
+									$scope.isShowData = true;
+
+								}
 							})
 							.catch(function (err) {
 								TIP.hideLoading($scope);
-								TIP.openDialog('服务器报错');
 							})
 					}
 
@@ -96,12 +144,12 @@ angular.module('app')
 			}
 
 
-			return;
-			chartInstance = chart.generateChart('chart', '天香鸡销量', ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'], [120, 200, 150, 80, 70, 110, 130, 160, 174, 198, 208, 307]);
+			
 		};
 
 		$scope.clearChart = function () {
 			chart.clearChart(chartInstance);
+			$scope.isShowData = false;
 		}
 
 		//获取产品信息

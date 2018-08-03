@@ -340,7 +340,7 @@ class RouteController {
 							})
 							.catch(err => {
 								console.log('addUserController出错了');
-								res.json({msg: '服务器报错或者手机号已存在', code: 5001});
+								res.json({msg: '添加失败，手机号已存在或者身份证号已存在', code: 5001});
 							})
 
 
