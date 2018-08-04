@@ -102,7 +102,7 @@ angular.module('app')
 		}
 	
 		/**
-		* 0: 待付款, 1: 待发货, 2: 已发货, 3: 已收货, 4: 删除
+		* 0: 待付款, 1: 待发货, 2: 已发货, 3: 已收货
 		**/
 		//分页
 		$scope.isSearch = false;
@@ -170,16 +170,59 @@ angular.module('app')
 
 							API.fetchGet('/findorder', query)
 							.then(function (data) {
-								TIP.hideLoading();
+								
 								if (data.data.code == 3000) {
 
 									//取出所有单号
-									// var orderNos = [];
+									var orderNos = [];
 									data.data.data.forEach(function (v, i) {
 										v.num = i + ($scope.option.curr - 1) * everyPageData;
 										v.create_time = new Date(v.create_time).formatDate('yyyy-MM-dd hh:mm:ss');
-										// orderNos.unshift(v.orderNo);
+										orderNos.push(v.orderNo);
 									})
+
+									console.log('orderNos ==> ', orderNos);
+									//查询订单反馈状态信息, 有反馈并且未浏览的反馈显示小红点
+									API.fetchGet('/findcommentofordernos', {
+										orderNos: orderNos.join(','),
+										_tVc: _tVc
+									})
+										.then(function (data) {
+											console.log('findcommentofordernos data ==> ', data);
+											TIP.hideLoading();
+											//根据订单号获取id最大数据
+											if (data.data.code == 3000) {
+												var resultData = data.data.data;
+												var d = [];
+												for (var i = 0; i < orderNos.length; i++) {
+													var a = [];
+													for (var j = 0; j < resultData.length; j++) {
+														if (orderNos[i] == resultData[j].orderNo) {
+
+															if (a[0] && a[0].id < resultData[j].id) {
+																a.pop();
+															}
+
+															if (a.length == 0) {
+																a.push(resultData[j]);
+															}
+														}
+													}
+
+													if (a.length > 0) {
+														d.push(a[0]);
+													}
+												}
+
+												console.log(d);
+											}
+											
+										})
+										.catch(function (err) {
+											TIP.hideLoading();
+										})
+
+
 									$scope.pageDataList = data.data.data;
 									$scope.authority = data.data.auth;
 									if (isInit){
@@ -234,7 +277,6 @@ angular.module('app')
 				document.getElementById('pagination').innerHTML = '';
 				isInit = true;
 				$scope.isSearch = true;
-				console.log($scope.search.orderNo);
 				initPage($scope.search.orderNo);
 			}
 			

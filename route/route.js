@@ -86,4 +86,6 @@ module.exports = function (app) {
 
 	app.get('/datastatistics', routeController.dataStatisticsController);
 
+	app.get('/findcommentofordernos', routeController.findCommentOfOrderNosController);
+
 }

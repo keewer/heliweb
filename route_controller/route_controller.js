@@ -1478,7 +1478,7 @@ class RouteController {
 								})
 						})
 							.then(result => {
-								res.json({data: result});
+								res.json({data: result, code: 1});
 							})
 							.catch(err => {
 								res.json(common.auth.fail);
@@ -1636,6 +1636,42 @@ class RouteController {
 								res.json(common.server.error);
 							})
 
+					}
+				} else {
+					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询订单反馈是否浏览信息
+	findCommentOfOrderNosController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						api.findAlling('Comment', ['id', 'orderNo', 'zoreAuth', 'oneAuth', 'twoAuth', 'threeAuth'], {
+							orderNo: {
+								$in: req.query.orderNos.split(',')
+							}
+						})
+							.then(result => {
+								let data = [];
+								if (result && Array.isArray(result)) {
+									result.forEach(v => {
+										data.push(v.dataValues);
+									})
+								}
+								res.json({msg: '查询成功', code: 3000, data});
+							})
+							.catch(err => {
+								res.json(common.auth.fail);
+							})
 					}
 				} else {
 					res.json(common.auth.fail);

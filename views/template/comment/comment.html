@@ -17,7 +17,7 @@
 			<p>收货人(分销商)：{{comments.order.username}}</p>
 			<p>收货人(分销商)手机号：{{comments.order.phone}}</p>
 			<p>收货地址：{{comments.order.address}}</p>
-			<p>订单总价：{{comments.order.price * comments.order.count}}</p>
+			<p>订单总额：{{comments.order.price * comments.order.count}}</p>
 			<button type="button" class="btn btn-warning" ng-disabled="isComment" ng-click="comment()">立即反馈</button>
 		</div>
 		<div class="edit-comment" ng-show="isComment">

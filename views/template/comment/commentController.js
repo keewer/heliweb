@@ -40,6 +40,9 @@ angular.module('app')
 				TIP.openLoading($scope);
 				API.fetchPut('/addcomment', o)
 					.then(function (data) {
+						if (data.data.code == 1) {
+							$scope.comments.contents.push(data.data.data);
+						}
 						TIP.hideLoading();
 						$scope.isComment = false;
 						$scope.commentInfo.content = '';
@@ -72,6 +75,7 @@ angular.module('app')
 				TIP.openLoading($scope);
 				API.fetchGet('/findcomment', o)
 					.then(function (data) {
+						console.log('findcomment data ==> ', data);
 						TIP.hideLoading();
 						$scope.comments.contents = data.data.data.contents;
 					})
