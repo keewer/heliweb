@@ -88,4 +88,8 @@ module.exports = function (app) {
 
 	app.get('/findcommentofordernos', routeController.findCommentOfOrderNosController);
 
+	app.get('/phonecode', routeController.phoneCodeController);
+
+	app.post('/forgot', routeController.forgotController);
+
 }

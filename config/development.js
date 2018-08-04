@@ -45,7 +45,9 @@ exports.imgCodeOptions = {
 exports.ignoreUrls = [
 	'/',
 	'/imgcode',
-	'/login'
+	'/login',
+	'/forgot',
+	'/phonecode'
 ];
 
 exports.verifyIdcardOptions = {
@@ -67,4 +69,15 @@ exports.orderNoOptions = {
 
 exports.initPwdOptions = {
 	pwd: 'heli123'
+}
+
+exports.tokenOptions = {
+	expiresIn: '1d'
+}
+
+exports.SMSClientOptions = {
+	accessKeyId: 'LTAIrj5vR5JT836y',
+	secretAccessKey: 'NyW02ef4CNJ75AGvZoVIMOlnaepi6V',
+	signName: '粤企APP',
+	templateCode: 'SMS_109055010'
 }

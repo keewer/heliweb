@@ -77,7 +77,7 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
-	        				<i class="fa fa-mobile fa-lg"></i>
+	        				手机号码
 	        			</span>
 	        			<input class="form-control" type="text" name="phone" autocomplete="off" placeholder="手机号" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" />
 	        		</div>
@@ -93,7 +93,7 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
-	        				<i class="fa fa-lock"></i>
+	        				密<i class="space"></i>码
 	        			</span>
 	        			<input class="form-control" type="password" name="pwd" autocomplete="off" placeholder="密码(6-16位)" ng-model="userInfo.pwd" ng-required="true" ng-pattern="/^\w{6,16}$/" />
 	        		</div>
@@ -109,7 +109,7 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
-	        				<i class="fa fa-lock"></i>
+	        				确认密码
 	        			</span>
 	        			<input class="form-control" type="password" name="repwd" autocomplete="off" placeholder="确认密码" ng-model="userInfo.repwd" />
 	        		</div>
@@ -122,7 +122,7 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
-	        				<i class="fa fa-user"></i>
+	        				真实姓名
 	        			</span>
 	        			<input class="form-control" type="text" name="username" autocomplete="off" placeholder="真实姓名" ng-required="true" ng-model="userInfo.username" />
 	        		</div>
@@ -135,7 +135,7 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
-	        				<i class="fa fa-address-card-o"></i>
+	        				身份证号
 	        			</span>
 	        			<input class="form-control" type="text" name="idcard" autocomplete="off" placeholder="身份证号" ng-model="userInfo.idcard" ng-required="true" ng-pattern="/^\d{17}(\d|x)$/i" />
 	        		</div>
@@ -151,7 +151,7 @@
 	        	<div class="form-group">
 	        		<div class="input-group">
 	        			<span class="input-group-addon">
-	        				<i class="fa fa-location-arrow"></i>
+	        				收货地址
 	        			</span>
 	        			<input class="form-control" type="text" name="address" autocomplete="off" placeholder="收货地址" ng-required="true" ng-pattern="/^[A-z0-9\u4e00-\u9fa5-,，\.。]+$/" ng-model="userInfo.address" ng-maxlength="30" />
 	        		</div>

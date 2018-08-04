@@ -35,3 +35,8 @@
 .forgot .forgot>span{
 	cursor: pointer;
 }
+
+.forgot .getcode{
+	cursor: pointer;
+	user-select: none;
+}

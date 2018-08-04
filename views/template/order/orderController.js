@@ -170,25 +170,23 @@ angular.module('app')
 
 							API.fetchGet('/findorder', query)
 							.then(function (data) {
-								
 								if (data.data.code == 3000) {
-
+									var orderData = data.data.data;
 									//取出所有单号
 									var orderNos = [];
-									data.data.data.forEach(function (v, i) {
+									orderData.forEach(function (v, i) {
 										v.num = i + ($scope.option.curr - 1) * everyPageData;
 										v.create_time = new Date(v.create_time).formatDate('yyyy-MM-dd hh:mm:ss');
 										orderNos.push(v.orderNo);
 									})
 
-									console.log('orderNos ==> ', orderNos);
 									//查询订单反馈状态信息, 有反馈并且未浏览的反馈显示小红点
 									API.fetchGet('/findcommentofordernos', {
 										orderNos: orderNos.join(','),
 										_tVc: _tVc
 									})
 										.then(function (data) {
-											console.log('findcommentofordernos data ==> ', data);
+											
 											TIP.hideLoading();
 											//根据订单号获取id最大数据
 											if (data.data.code == 3000) {
@@ -214,7 +212,18 @@ angular.module('app')
 													}
 												}
 
-												console.log(d);
+												//将订单标识加入orderData中
+												for (var m = 0; m < d.length; m++) {
+													for (var n = 0; n < orderData.length; n++) {
+														if (d[m].orderNo == orderData[n].orderNo) {
+															orderData[n].zoreAuth = d[m].zoreAuth;
+															orderData[n].oneAuth = d[m].oneAuth;
+															orderData[n].twoAuth = d[m].twoAuth;
+															orderData[n].threeAuth = d[m].threeAuth;
+															break;
+														}
+													}
+												}
 											}
 											
 										})
@@ -223,7 +232,7 @@ angular.module('app')
 										})
 
 
-									$scope.pageDataList = data.data.data;
+									$scope.pageDataList = orderData;
 									$scope.authority = data.data.auth;
 									if (isInit){
 										var pagination = $compile('<pagination page-option="option"></pagination>')($scope)[0];

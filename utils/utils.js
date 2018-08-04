@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 
 const moment = require('moment');
 
+const SMSClient = require('@alicloud/sms-sdk');
+
 let transporter = nodemailer.createTransport({
 	host: config.emailOptions.host,
 	port: config.emailOptions.port,
@@ -43,7 +45,7 @@ class Utils {
 			}, 
 			config.saltOptions.salt,
 			{
-				expiresIn: '1d'
+				expiresIn: config.tokenOptions.expiresIn
 			}
 		);
 
@@ -83,6 +85,23 @@ class Utils {
     });
 
     req.end();
+	}
+
+
+	sendMessage(o) {
+		let smsClient = new SMSClient({
+			accessKeyId: config.SMSClientOptions.accessKeyId,
+			secretAccessKey: config.SMSClientOptions.secretAccessKey
+		});
+
+		//发送短信, smsClient.sendSMS返回一个promsie
+		return smsClient.sendSMS({
+		    PhoneNumbers: o.phone,
+		    SignName: config.SMSClientOptions.signName,
+		    TemplateCode: config.SMSClientOptions.templateCode,
+		    TemplateParam: '{"code": "'+ o.code +'"}'
+		});
+
 	}
 
 }

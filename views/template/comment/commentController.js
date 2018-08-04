@@ -75,7 +75,6 @@ angular.module('app')
 				TIP.openLoading($scope);
 				API.fetchGet('/findcomment', o)
 					.then(function (data) {
-						console.log('findcomment data ==> ', data);
 						TIP.hideLoading();
 						$scope.comments.contents = data.data.data.contents;
 					})

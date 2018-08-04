@@ -50,3 +50,8 @@
 .distributor .show-all-data{
 	margin-right: 15px;
 }
+
+.distributor .space{
+	display: inline-block;
+	width: 28px;
+}

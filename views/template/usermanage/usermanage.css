@@ -42,3 +42,8 @@
 	background-color: #337AB7;
 	color: #efefef;
 }
+
+.usermanage .space{
+	display: inline-block;
+	width: 28px;
+}

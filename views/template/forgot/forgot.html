@@ -8,7 +8,7 @@
 					<span class="input-group-addon">
 						<i class="fa fa-mobile fa-lg"></i>
 					</span>
-					<input class="form-control" type="text" name="phone" autocomplete="off" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" placeholder="手机号" />
+					<input class="form-control" type="text" name="phone" autocomplete="off" ng-model="userInfo.phone" ng-required="true" ng-pattern="/^1[35678]\d{9}$/" placeholder="手机号" maxlength="11" />
 				</div>
 
 				<div ng-hide="userForm.phone.$pristine">
@@ -61,7 +61,7 @@
 						<i class="fa fa-unlock-alt"></i>
 					</span>
 					<input class="form-control" type="text" name="code" autocomplete="off" ng-model="userInfo.code" ng-required="true" placeholder="手机验证码" />
-					<span class="input-group-addon">
+					<span class="input-group-addon getcode" ng-click="getPhoneCode($event)">
 						获取验证码
 					</span>
 				</div>
@@ -74,7 +74,7 @@
 			</div>
 			
 			<div class="form-group">
-				<button ng-disabled="userForm.$invalid || userInfo.code != codeText" type="button" class="btn btn-success btn-block">提交</button>
+				<button ng-disabled="userForm.$invalid || userInfo.code != codeText" type="button" class="btn btn-success btn-block" ng-click="commit()">提交</button>
 				<div class="forgot">
 					<span ui-sref="login">登录</span>
 				</div>

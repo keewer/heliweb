@@ -4,7 +4,7 @@ const api = require(__basename + '/api/api.js');
 
 const common = require(__basename + '/common/common.js');
 
-console.log(utils.addCrypto('440883199012032614'));
+// console.log(utils.addCrypto('440883199012032614'));
 
 class RouteController {
 
@@ -12,7 +12,7 @@ class RouteController {
 
 	//token拦截
 	tokenController(req, res, next) {
-
+		req.url = req.url.indexOf('?') > -1 ? req.url.split('?')[0] : req.url;
 		if (config.ignoreUrls.includes(req.url)) {
 			return next();
 		}
@@ -1675,6 +1675,78 @@ class RouteController {
 					}
 				} else {
 					res.json(common.auth.fail);
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//获取手机验证码
+	phoneCodeController(req, res) {
+		api.findOne('User', ['phone', 'status', 'auth'], {phone: req.query.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else if (result.dataValues.auth == 4) {
+						res.json({msg: '该手机用户为分销商，无权限修改', code: 3002});
+
+					} else {
+						//获取手机验证码
+						let phoneCode = Math.random().toString().slice(-4);
+
+						//测试拦截发送验证码
+						return res.json({msg: '手机验证码已发至 ' + result.dataValues.phone, code: 3000, phoneCode});
+
+						utils.sendMessage({phone: result.dataValues.phone, code: phoneCode})
+							.then(sms => {
+								 let {Code} = sms;
+								  if (Code === 'OK') {
+						        res.json({msg: '手机验证码已发至 ' + result.dataValues.phone, code: 3000, phoneCode});
+    							} else {
+    								res.json({msg: '手机验证码获取失败', code: 3003});
+    							}
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+						
+					}
+				} else {
+					res.json({msg: '不存在该手机用户', code: 3001})
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//重置密码
+	forgotController(req, res) {
+		api.findOne('User', ['phone', 'status', 'auth'], {phone: req.body.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else if (result.dataValues.auth == 4) {
+						res.json({msg: '该手机用户为分销商，无权限修改', code: 3002});
+
+					} else {
+						//加密密码
+						let pwd = utils.addCrypto(req.body.pwd);
+						api.update('User', {pwd}, {phone: result.dataValues.phone})
+							.then(result => {
+								res.json({msg: '更新成功', code: 1});
+							})
+							.catch(err => {
+								res.json(common.server.error);
+							})
+					}
+				} else {
+					res.json({msg: '不存在该手机用户', code: 3001})
 				}
 			})
 			.catch(err => {

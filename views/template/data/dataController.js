@@ -129,7 +129,7 @@ angular.module('app')
 									}
 
 									//展示统计数据
-									chartInstance = chart.generateChart('chart', datas[0].productNo + '：' + datas[0].name +'销量总量 ' + allCount + '   销售总额 ' + allMoney, monthData, allData);
+									chartInstance = chart.generateChart('chart', datas[0].productNo + '：' + datas[0].name +'销售总量 ' + allCount + '   销售总额 ' + allMoney, monthData, allData);
 
 									$scope.isShowData = true;
 
@@ -162,7 +162,6 @@ angular.module('app')
 				TIP.openLoading($scope);
 				API.fetchGet('/findproductcount', {_tVc: _tVc})
 					.then(function (data) {
-						console.log(data);
 						TIP.hideLoading();
 						if (data.data.code == 3000) {
 							if (data.data.auth == 2) {
