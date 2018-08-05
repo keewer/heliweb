@@ -363,7 +363,6 @@ angular.module('app')
 				API.fetchPost('/promote', o)
 					.then(function (data) {
 						TIP.hideLoading();
-						console.log(data);
 						if (data.data.code == 3000) {
 							$scope.promoteCount = data.data.data.promoteCount;
 							$scope.promote.count = '';

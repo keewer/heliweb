@@ -143,8 +143,10 @@ class RouteController {
 							'position',
 							'rp',
 							'sp',
+							'tp',
 							'primaryRelationship',
-							'secondaryRelationship'
+							'secondaryRelationship',
+							'thirdRelationship'
 						];
 
 						if (req.query.username) {
@@ -209,8 +211,10 @@ class RouteController {
 							'position',
 							'rp',
 							'sp',
+							'tp',
 							'primaryRelationship',
-							'secondaryRelationship'
+							'secondaryRelationship',
+							'thirdRelationship'
 						];
 
 						if (req.query.username) {
@@ -299,7 +303,7 @@ class RouteController {
 	//添加用户
 	addUserController(req, res) {
 
-		api.findOne('User', ['username', 'id', 'auth', 'status', 'primaryRelationship', 'rp'], {phone: req.phone})
+		api.findOne('User', ['username', 'id', 'auth', 'status', 'primaryRelationship', 'secondaryRelationship', 'rp', 'sp'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -318,14 +322,17 @@ class RouteController {
 							//营销总监
 							ro.primaryRelationship = 0;
 							ro.secondaryRelationship = 0;
+							ro.thirdRelationship = 0;
 							ro.auth = 3;
 							ro.position = '总代理';
 						} else if (result.dataValues.auth == 3) {
 							//总代理
 							ro.primaryRelationship = Number(result.dataValues.id);
 							ro.secondaryRelationship = Number(result.dataValues.primaryRelationship);
+							ro.thirdRelationship = Number(result.dataValues.secondaryRelationship);
 							ro.rp = result.dataValues.username;
 							ro.sp = result.dataValues.rp;
+							ro.tp = result.dataValues.sp;
 							ro.auth = 4;
 							ro.position = '分销商';
 						}
@@ -729,7 +736,7 @@ class RouteController {
 
 	//加入订单
 	addOrderController(req, res) {
-			api.findOne('User', ['id', 'username', 'phone', 'auth', 'status', 'primaryRelationship', 'secondaryRelationship'], {phone: req.phone})
+			api.findOne('User', ['id', 'auth', 'status'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
 					if (result.dataValues.status == 0) {
@@ -738,7 +745,7 @@ class RouteController {
 					} else {
 						if (result.dataValues.auth == 3) {
 							//查找该总代理是否存在该分销商
-							api.findOne('User', ['id', 'username', 'status', 'phone', 'primaryRelationship', 'secondaryRelationship'], {
+							api.findOne('User', ['id', 'status', 'primaryRelationship', 'secondaryRelationship', 'thirdRelationship'], {
 								phone: req.body.phone,
 								username: req.body.receive,
 								primaryRelationship: result.dataValues.id,
@@ -752,76 +759,118 @@ class RouteController {
 									} else {
 										let primaryRelationship = result.dataValues.primaryRelationship;
 										let secondaryRelationship = result.dataValues.secondaryRelationship;
+										let thirdRelationship = result.dataValues.thirdRelationship;
 										let id = result.dataValues.id;
-										api.max('Order', 'id')
-											.then(max => {
-												let year = new Date().getFullYear();
-												let orderNo = config.orderNoOptions.flag + year;
-												if (!max) {
-													//如果订单号不存在
-													orderNo += '0000000001';
-													api.create('Order', {
-														orderNo,
-														productNo: req.body.productNo,
-														name: req.body.productName,
-														price: req.body.price,
-														count: req.body.count,
-														uid: id,
-														address: req.body.address,
-														status: 0,
-														primaryRelationship,
-														secondaryRelationship,
-														auth: 4
-													})
-														.then(result => {
-															res.json({msg: '创建订单成功', code: 9000});
-														})
-														.catch(err => {
-															res.json(common.server.error);
-														})
-												} else {
-													//如果订单号存在
-													api.findOne('Order', ['orderNo'], {id: max})
-														.then(result => {
-															if (result && result.dataValues) {
-																let no = (+result.dataValues.orderNo.slice(orderNo.length) + 1).toString();
-																let strNO = no;
-																for (let i = 0; i < config.orderNoOptions.length - no.length; i++) {
-																	strNO = '0' + strNO;
-																}
-																orderNo += strNO;
-																api.create('Order', {
-																	orderNo,
-																	productNo: req.body.productNo,
-																	name: req.body.productName,
-																	price: req.body.price,
-																	count: req.body.count,
-																	uid: id,
-																	address: req.body.address,
-																	status: 0,
-																	primaryRelationship,
-																	secondaryRelationship,
-																	auth: 4
+
+										//查询商品信息
+										api.findOne('Product', ['productNo', 'name', 'price', 'status', 'firstLevel', 'secondLevel', 'thirdLevel'], {productNo: req.body.productNo})
+											.then(result => {
+												if (result && result.dataValues) {
+													if (result.dataValues.status == 0) {
+														res.json({msg: '该商品已被禁用，无法下单', code: 3002});
+													} else {
+														if (Number(result.dataValues.price) == Number(req.body.price)) {
+
+															let productNo = result.dataValues.productNo;
+															let name = result.dataValues.name;
+															let price = result.dataValues.price;
+															let firstLevel = result.dataValues.firstLevel;
+															let secondLevel = result.dataValues.secondLevel;
+															let thirdLevel = result.dataValues.thirdLevel
+
+															//加入订单
+															api.max('Order', 'id')
+																.then(max => {
+																	let year = new Date().getFullYear();
+																	let orderNo = config.orderNoOptions.flag + year;
+																	if (!max) {
+																		//如果订单号不存在
+																		orderNo += '0000000001';
+																		api.create('Order', {
+																			orderNo,
+																			productNo,
+																			name,
+																			price,
+																			count: req.body.count,
+																			uid: id,
+																			address: req.body.address,
+																			status: 0,
+																			primaryRelationship,
+																			secondaryRelationship,
+																			thirdRelationship,
+																			auth: 4,
+																			firstLevel,
+																			secondLevel,
+																			thirdLevel
+																		})
+																			.then(result => {
+																				res.json({msg: '创建订单成功', code: 9000});
+																			})
+																			.catch(err => {
+																				res.json(common.server.error);
+																			})
+																	} else {
+																		//如果订单号存在
+																		api.findOne('Order', ['orderNo'], {id: max})
+																			.then(result => {
+																				if (result && result.dataValues) {
+																					let no = (+result.dataValues.orderNo.slice(orderNo.length) + 1).toString();
+																					let strNO = no;
+																					for (let i = 0; i < config.orderNoOptions.length - no.length; i++) {
+																						strNO = '0' + strNO;
+																					}
+																					orderNo += strNO;
+																					api.create('Order', {
+																						orderNo,
+																						productNo,
+																						name,
+																						price,
+																						count: req.body.count,
+																						uid: id,
+																						address: req.body.address,
+																						status: 0,
+																						primaryRelationship,
+																						secondaryRelationship,
+																						thirdRelationship,
+																						auth: 4,
+																						firstLevel,
+																						secondLevel,
+																						thirdLevel
+																					})
+																						.then(result => {
+																							res.json({msg: '创建订单成功', code: 9000});
+																						})
+																						.catch(err => {
+																							res.json(common.server.error);
+																						})
+																	
+																				} else {
+																					res.json(common.server.error);
+																				}
+																			})
+																			.catch(err => {
+																				res.json(common.server.error);
+																			})
+																	}
 																})
-																	.then(result => {
-																		res.json({msg: '创建订单成功', code: 9000});
-																	})
-																	.catch(err => {
-																		res.json(common.server.error);
-																	})
-												
-															} else {
-																res.json(common.server.error);
-															}
-														})
-														.catch(err => {
-															res.json(common.server.error);
-														})
+																.catch(err => {
+																	res.json(common.server.error);
+																})
+
+
+														} else {
+															res.json({msg: '该商品单价有改变，请刷新重新下单', code: 3003});
+														}
+													}
+												} else {
+													res.json({msg: '不能存在该商品', code: 3001});
 												}
 											})
 											.catch(err => {
 												res.json(common.server.error);
 											})
+
+										
 									}
 
 								} else {

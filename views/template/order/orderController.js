@@ -33,8 +33,13 @@ angular.module('app')
 				API.fetchPut('/addorder', o)
 					.then(function (data) {
 						TIP.hideLoading();
-						if (data.data.code == 8002 || data.data.code == 8001 || data.data.code == 5000) {
-							TIP.openDialog(data.data.msg);
+						if (data.data.code == 9000) {
+							$('#newOrder').modal('hide');
+							$('#newOrder input').val('');
+							$scope.isSearch = true;
+							for (var key in $scope.orderInfo) {
+								$scope.orderInfo[key] = '';
+							}
 						} else if (data.data.code == 4001) {
 							TIP.openDialog(data.data.msg);
 							$timeout(function () {
@@ -42,12 +47,7 @@ angular.module('app')
 								$state.go('login');
 							}, 2000)
 						} else {
-							$('#newOrder').modal('hide');
-							$('#newOrder input').val('');
-							$scope.isSearch = true;
-							for (var key in $scope.orderInfo) {
-								$scope.orderInfo[key] = '';
-							}
+							TIP.openDialog(data.data.msg);
 						}
 					})
 					.catch(function (err) {
