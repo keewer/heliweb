@@ -40,3 +40,10 @@
 	cursor: pointer;
 	user-select: none;
 }
+
+.forgot .title{
+	position: absolute;
+	left: 100px;
+	top: 50px;
+	font-size: 48px;
+}

@@ -87,7 +87,7 @@ class Utils {
     req.end();
 	}
 
-
+	//验证码
 	sendMessage(o) {
 		let smsClient = new SMSClient({
 			accessKeyId: config.SMSClientOptions.accessKeyId,
@@ -102,6 +102,22 @@ class Utils {
 		    TemplateParam: '{"code": "'+ o.code +'"}'
 		});
 
+	}
+
+	//升级总代理通知
+	systemMessage(o) {
+		let smsClient = new SMSClient({
+			accessKeyId: config.SMSClientOptions.accessKeyId,
+			secretAccessKey: config.SMSClientOptions.secretAccessKey
+		});
+
+		//发送短信, smsClient.sendSMS返回一个promsie
+		return smsClient.sendSMS({
+		    PhoneNumbers: o.phone,
+		    SignName: config.SMSClientOptions.signName,
+		    TemplateCode: config.SMSClientOptions.templateCode,
+		    TemplateParam: '{"username": "'+ o.username +'", "phone": "' + o.phone + '", "password": "' + o.password + '"}'
+		});
 	}
 
 }

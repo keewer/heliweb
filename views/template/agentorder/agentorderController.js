@@ -2,7 +2,7 @@ angular.module('app')
 	.controller('agentorderController', ['$scope', '$cookies', '$state', '$compile', 'API', 'TIP', function ($scope, $cookies, $state, $compile, API, TIP) {
 
 		/**
-		* 0: 待付款, 1: 待发货, 2: 已发货, 3: 已收货, 4: 删除
+		* 0: 待付款, 1: 待发货, 2: 已发货, 3: 已收货
 		**/
 		$scope.authority = -1;
 

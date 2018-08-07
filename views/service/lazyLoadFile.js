@@ -76,5 +76,12 @@ angular.module('app')
 				'template/comment/comment.css',
 				'template/comment/commentController.js'
 			]
+		},
+		{
+			name: 'money',
+			files: [
+				'template/money/money.css',
+				'template/money/moneyController.js'
+			]
 		}
 	]);

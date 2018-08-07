@@ -39,6 +39,13 @@ angular.module('app')
 				url: 'data'
 			},
 			{
+				name: '返利汇总',
+				iconcls: 'fa-money',
+				licls: {'active-bg': false},
+				state: 'home.money',
+				url: 'money'
+			},
+			{
 				name: '个人中心',
 				iconcls: 'fa-user',
 				licls: {'active-bg': false},
@@ -69,12 +76,18 @@ angular.module('app')
 						if (data.data.auth == 2) {
 							//客服
 							$scope.list.push(list[1]);
-							$scope.list.push(list[4]);
-						} else if (data.data.auth == 3 || data.data.auth == 1) {
+							$scope.list.push(list[5]);
+						} else if (data.data.auth == 3) {
 							$scope.list.push(list[0]);
 							$scope.list.push(list[1]);
 							$scope.list.push(list[3]);
 							$scope.list.push(list[4]);
+							$scope.list.push(list[5]);
+						} else if (data.data.auth == 1) {
+							$scope.list.push(list[0]);
+							$scope.list.push(list[1]);
+							$scope.list.push(list[3]);
+							$scope.list.push(list[5]);
 						} else if (data.data.auth == 0) {
 							$scope.list = list;
 						}

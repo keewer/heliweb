@@ -86,7 +86,7 @@ angular.module('app')
 						//发送请求
 						API.fetchGet('/datastatistics', o)
 							.then(function (data) {
-								TIP.hideLoading($scope);
+								TIP.hideLoading();
 								if (data.data.code == 3000) {
 									var datas = data.data.data;
 									if (datas.length == 0) {
@@ -136,7 +136,7 @@ angular.module('app')
 								}
 							})
 							.catch(function (err) {
-								TIP.hideLoading($scope);
+								TIP.hideLoading();
 							})
 					}
 

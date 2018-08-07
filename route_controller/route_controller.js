@@ -4,8 +4,6 @@ const api = require(__basename + '/api/api.js');
 
 const common = require(__basename + '/common/common.js');
 
-// console.log(utils.addCrypto('440883199012032614'));
-
 class RouteController {
 
 	constructor() {}
@@ -1291,11 +1289,13 @@ class RouteController {
 										.then(result => {
 											let resulting = result;
 											//查找分销商是否升级为总代理, 如果升级则不需要不执行事务处理
-											api.findOne('User', ['auth'], {id: req.body.uid})
+											api.findOne('User', ['username', 'phone', 'auth'], {id: req.body.uid})
 												.then(result => {
 													if (result && result.dataValues) {
 														if (result.dataValues.auth == 4) {
 															if (resulting >= promoteCount) {
+																let username = result.dataValues.username;
+																let phone = result.dataValues.phone;
 																//升级为总代理, 修改职位为总代理, 初始化密码, 权限 = 3, 修改订单表的权限值
 																//开启事务处理
 																let pwd = utils.addCrypto(config.initPwdOptions.pwd);
@@ -1308,6 +1308,25 @@ class RouteController {
 																})
 																.then(result => {
 																	res.json({msg: '查询成功', code: 3000, promoteCount, count: resulting, data: result, promote: true});
+																	//短信通知用户升级为总代理
+																	// utils.systemMessage({
+																	// 	username,
+																	// 	phone,
+																	// 	password: config.initPwdOptions.pwd
+																	// })
+																	// 	.then(sys => {
+																	// 		let {Code} = sys;
+																	// 		if (Code == 'OK') {
+																	// 			console.log('系统已发送短信通知用户升级为总代理');
+																	// 		} else {
+																	// 			console.log('系统发送短息失败');
+																	// 		}
+																	// 	})
+																	// 	.catch(err => {
+																	// 		console.log('系统发短信通知出现错误');
+																	// 	})
+
+																	
 																})
 																.catch(err => {
 																	res.json(common.server.error);
@@ -1764,7 +1783,7 @@ class RouteController {
 						
 					}
 				} else {
-					res.json({msg: '不存在该手机用户', code: 3001})
+					res.json({msg: '不存在该手机用户', code: 3001});
 				}
 			})
 			.catch(err => {
@@ -1796,6 +1815,48 @@ class RouteController {
 					}
 				} else {
 					res.json({msg: '不存在该手机用户', code: 3001})
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询
+	moneyController(req, res) {
+		api.findOne('User', ['status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						if (result.dataValues.auth == 3) {
+							//如果当前用户是总代理, 仅查询当前用户订单信息
+							
+
+						} else if (result.dataValues.auth == 0 || result.dataValues.auth == 1) {
+							//如果当前用户是总经理或者营销总监, 查询所有用户订单信息
+							let sql = "SELECT `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `o`.`id` AS `oid`, `o`.`orderNo`, `o`.`price`, `o`.`count`, `o`.`money`, `o`.`status`, `o`.`primaryRelationship`, `o`.`secondaryRelationship`, `o`.`thirdRelationship`, `o`.`firstLevel`, `o`.`secondLevel`, `o`.`thirdLevel`, `o`.`receiveTime` FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`primaryRelationship` AND `o`.`status` = 3 AND `o`.`receiveTime` >= :start AND `o`.`receiveTime` <= :end";
+							 
+							api.query(sql, {
+								start: req.query.start, 
+								end: req.query.end 
+							})
+								.then(result => {
+									res.json({msg: '查询成功', code: 3000, data: result});
+								})
+								.catch(err => {
+									res.json(common.server.error);
+								})
+						} else {
+							//其他无权限查询
+							res.json(common.auth.fail);
+						}
+
+					}
+				} else {
+					res.json({msg: '不存在该手机用户', code: 3001});
 				}
 			})
 			.catch(err => {

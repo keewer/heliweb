@@ -1,0 +1,75 @@
+<div class="money">
+	<div class="money-top">
+			<div class="clearfix">
+				<div class="money-title pull-left">返利汇总</div>
+				<div class="pull-right">
+					<div class="pull-left show-all-data">
+						<button type="button" class="btn btn-primary" ng-disabled="!isSearch" ng-click="showAllData()">显示所有数据</button>
+					</div>
+					<div class="pull-left search">
+						<div class="form-group">
+							<div class="input-group">
+								<input ng-disabled="!isShowData" class="form-control" type="text" name="search" placeholder="输入总代理名称..." ng-model="search.name" ng-keydown="enterSearching($event)" />
+								<span class="input-group-addon searching" ng-click="searching()">
+									<i class="fa fa-search"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+
+			<div class="form-money">
+				<form name="moneyForm" novalidate class="clearfix">
+					<div class="pull-left date">
+						<div class="pull-left start-date-title">开始日期:</div>
+						<div class="start-date pull-left">
+							<input ng-disabled="isShowData" class="form-control" type="month" name="starttime" ng-model="moneyInfo.startDate" ng-required="true" />
+						</div>
+					</div>
+					<div class="pull-left date">
+						<div class="pull-left start-date-title">结束日期:</div>
+						<div class="start-date pull-left">
+							<input ng-disabled="isShowData" class="form-control" type="month" name="endtime" ng-model="moneyInfo.endDate" ng-required="true" />
+						</div>
+					</div>
+					<div class="pull-left date" ng-if="authority == 0 || authority == 1 || authority == 3">
+						<button class="btn btn-primary" ng-disabled="moneyForm.$invalid || isShowData" ng-click="generateData()">生成数据</button>
+						<button class="btn btn-danger" ng-disabled="!isShowData" ng-click="clearData()">清除数据</button>
+					</div>
+				</form>
+			</div>
+	</div>
+	<div>
+		<div class="table-responsive">
+		<table class="table table-striped table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>总代理</th>
+					<th>手机号码</th>
+					<th>一级返利金额</th>
+					<th>二级返利金额</th>
+					<th>三级返利金额</th>
+					<th>返利总金额</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="item in pageDataList track by $index">
+					<td>{{item.num + 1}}</td>
+					<td>{{item.username}}</td>
+					<td>{{item.phone}}</td>
+					<td>{{item.pr}}</td>
+					<td>{{item.sr}}</td>
+					<td>{{item.tr}}</td>
+					<td>{{item.pr + item.sr + item.tr}}</td>
+					<td><button type="button" class="btn btn-success btn-xs">查看详情</button></td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+		<div id="pagination" class="money-pagination"></div>
+	</div>
+</div>

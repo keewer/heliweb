@@ -115,6 +115,16 @@ angular.module('app')
 					}]
 				}
 			})
+			.state('home.money', {
+				url: '/money',
+				templateUrl: 'template/money/money.html',
+				controller: 'moneyController',
+				resolve: {
+					des: ['$ocLazyLoad', function ($ocLazyLoad) {
+						return $ocLazyLoad.load('money');
+					}]
+				}
+			})
 			
 
 	}])

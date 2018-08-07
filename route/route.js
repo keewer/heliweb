@@ -92,4 +92,6 @@ module.exports = function (app) {
 
 	app.post('/forgot', routeController.forgotController);
 
+	app.get('/money', routeController.moneyController);
+
 }
