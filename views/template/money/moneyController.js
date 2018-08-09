@@ -43,8 +43,8 @@ angular.module('app')
 					//闰年2 = yyyy-MM-29 23:59:59
 					//平年2 = yyyy-MM-28 23:59:59
 
-					var bigMonth = [1,3,5,7,8,10,12];
-					var smallMonth = [4,6,9,11];
+					var bigMonth = [1, 3, 5, 7, 8, 10, 12];
+					var smallMonth = [4, 6, 9, 11];
 
 					var start = startYear + '-' + (startMonth >= 10 ? startMonth : '0' + startMonth) + '-' + '01 00:00:00';
 
@@ -96,12 +96,17 @@ angular.module('app')
 										//筛选数据
 										//取出用户数据
 										var userIds = [];
-										datas.forEach(function (v) {
-											if (!userIds.finding(v.uid)) {
-												userIds.push(v.uid);
-												userData.push({uid: v.uid, username: v.username, phone: v.phone});
-											}
-										})
+										if (data.data.auth == 0) {
+											datas.forEach(function (v) {
+												if (!userIds.finding(v.uid)) {
+													userIds.push(v.uid);
+													userData.push({uid: v.uid, username: v.username, phone: v.phone});
+												}
+											})
+										} else if (data.data.auth == 3) {
+											userIds.push(data.data.id);
+											userData.push({uid: data.data.id, username: data.data.username, phone: data.data.phone});
+										}
 
 										//根据id = primaryRelationship | secondaryRelationship | thirdRelationship分组保存
 										userIds.forEach(function (v1, i) {
@@ -172,6 +177,9 @@ angular.module('app')
 					.then(function (data) {
 						TIP.hideLoading();
 						if (data.data.code == 1010) {
+							if (data.data.auth == 1 || data.data.auth == 2) {
+								$state.go('login');
+							}
 							$scope.authority = data.data.auth;
 						}
 					})
@@ -292,6 +300,15 @@ angular.module('app')
 			$scope.search.name = '';
 
 			temporaryAgent = '';
+	  }
+
+	  //查看详情
+	  $scope.moneyDetail = function (item) {
+	  	var sd = $scope.moneyInfo.startDate.getTime();
+	  	var ed = $scope.moneyInfo.endDate.getTime();
+	  	var uid = item.uid;
+	  	var p = uid + '-' + sd + '-' + ed;
+	  	$state.go('home.moneydetail', {p: p});
 	  }
 
 	}])

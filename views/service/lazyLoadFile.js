@@ -83,5 +83,12 @@ angular.module('app')
 				'template/money/money.css',
 				'template/money/moneyController.js'
 			]
+		},
+		{
+			name: 'moneydetail',
+			files: [
+				'template/moneydetail/moneydetail.css',
+				'template/moneydetail/moneyDetailController.js'
+			]
 		}
 	]);

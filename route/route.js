@@ -94,4 +94,6 @@ module.exports = function (app) {
 
 	app.get('/money', routeController.moneyController);
 
+	app.get('/moneydetail', routeController.moneyDetailController);
+
 }

@@ -211,6 +211,9 @@ angular.module('app')
 									$('#agent input').val('');
 									
 									$scope.isSearch = true;
+									for (var key in $scope.userInfo) {
+										$scope.userInfo[key] = '';
+									}
 								})
 								.catch(function (err) {
 									TIP.hideLoading();

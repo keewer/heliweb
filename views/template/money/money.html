@@ -2,7 +2,7 @@
 	<div class="money-top">
 			<div class="clearfix">
 				<div class="money-title pull-left">返利汇总</div>
-				<div class="pull-right">
+				<div class="pull-right" ng-if="authority == 0">
 					<div class="pull-left show-all-data">
 						<button type="button" class="btn btn-primary" ng-disabled="!isSearch" ng-click="showAllData()">显示所有数据</button>
 					</div>
@@ -65,7 +65,7 @@
 					<td>{{item.sr}}</td>
 					<td>{{item.tr}}</td>
 					<td>{{item.pr + item.sr + item.tr}}</td>
-					<td><button type="button" class="btn btn-success btn-xs">查看详情</button></td>
+					<td><button type="button" class="btn btn-success btn-xs" ng-click="moneyDetail(item)">查看详情</button></td>
 				</tr>
 			</tbody>
 		</table>

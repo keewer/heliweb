@@ -43,7 +43,7 @@ angular.module('app')
 				iconcls: 'fa-money',
 				licls: {'active-bg': false},
 				state: 'home.money',
-				url: 'money'
+				url: 'money@moneydetail'
 			},
 			{
 				name: '个人中心',

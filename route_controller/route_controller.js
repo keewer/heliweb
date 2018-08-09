@@ -1822,8 +1822,59 @@ class RouteController {
 			})
 	}
 
-	//查询
+	//查询返利汇总
 	moneyController(req, res) {
+		api.findOne('User', ['id', 'username', 'phone', 'status', 'auth'], {phone: req.phone})
+			.then(result => {
+				if (result && result.dataValues) {
+					if (result.dataValues.status == 0) {
+						//禁用
+						res.json(common.auth.fail);
+					} else {
+						let sql = "";
+						let o = {
+							start: req.query.start, 
+							end: req.query.end 
+						};
+						let id = result.dataValues.id;
+						let auth = result.dataValues.auth;
+						let username = result.dataValues.username;
+						let phone = result.dataValues.phone;
+						if (result.dataValues.auth == 3) {
+							
+							//如果当前用户是总代理, 仅查询当前用户订单信息
+							sql = "SELECT `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `o`.`id` AS `oid`, `o`.`orderNo`, `o`.`price`, `o`.`count`, `o`.`money`, `o`.`status`, `o`.`primaryRelationship`, `o`.`secondaryRelationship`, `o`.`thirdRelationship`, `o`.`firstLevel`, `o`.`secondLevel`, `o`.`thirdLevel`, `o`.`receiveTime` FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`primaryRelationship` AND (`o`.`primaryRelationship` = :id OR `o`.`secondaryRelationship` = :id OR `o`.`thirdRelationship` = :id) AND `o`.`status` = 3 AND `o`.`receiveTime` >= :start AND `o`.`receiveTime` <= :end";
+							o.id = id;
+
+						} else if (result.dataValues.auth == 0 || result.dataValues.auth == 1) {
+							//如果当前用户是总经理或者营销总监, 查询所有用户订单信息
+							sql = "SELECT `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `o`.`id` AS `oid`, `o`.`orderNo`, `o`.`price`, `o`.`count`, `o`.`money`, `o`.`status`, `o`.`primaryRelationship`, `o`.`secondaryRelationship`, `o`.`thirdRelationship`, `o`.`firstLevel`, `o`.`secondLevel`, `o`.`thirdLevel`, `o`.`receiveTime` FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`primaryRelationship` AND `o`.`status` = 3 AND `o`.`receiveTime` >= :start AND `o`.`receiveTime` <= :end";
+							
+						} else {
+							//其他无权限查询
+							res.json(common.auth.fail);
+						}
+
+						api.query(sql, o)
+							.then(result => {
+								res.json({id, auth, username, phone, msg: '查询成功', code: 3000, data: result});
+							})
+							.catch(err => {
+									res.json(common.server.error);
+							})
+
+					}
+				} else {
+					res.json({msg: '不存在该手机用户', code: 3001});
+				}
+			})
+			.catch(err => {
+				res.json(common.server.error);
+			})
+	}
+
+	//查询返利汇总详情
+	moneyDetailController(req, res) {
 		api.findOne('User', ['status', 'auth'], {phone: req.phone})
 			.then(result => {
 				if (result && result.dataValues) {
@@ -1831,32 +1882,37 @@ class RouteController {
 						//禁用
 						res.json(common.auth.fail);
 					} else {
-						if (result.dataValues.auth == 3) {
-							//如果当前用户是总代理, 仅查询当前用户订单信息
-							
+						//根据用户id和收货日期查询
+						api.findOne('User', ['id', 'auth', 'username', 'phone'], {id: req.query.uid})
+							.then(result => {
+								if (result && result.dataValues) {
+									let id = result.dataValues.id;
+									let auth = result.dataValues.auth;
+									let username = result.dataValues.username;
+									let phone = result.dataValues.phone;
 
-						} else if (result.dataValues.auth == 0 || result.dataValues.auth == 1) {
-							//如果当前用户是总经理或者营销总监, 查询所有用户订单信息
-							let sql = "SELECT `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `o`.`id` AS `oid`, `o`.`orderNo`, `o`.`price`, `o`.`count`, `o`.`money`, `o`.`status`, `o`.`primaryRelationship`, `o`.`secondaryRelationship`, `o`.`thirdRelationship`, `o`.`firstLevel`, `o`.`secondLevel`, `o`.`thirdLevel`, `o`.`receiveTime` FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`primaryRelationship` AND `o`.`status` = 3 AND `o`.`receiveTime` >= :start AND `o`.`receiveTime` <= :end";
-							 
-							api.query(sql, {
-								start: req.query.start, 
-								end: req.query.end 
+									let sql = "SELECT `u`.`id` AS `uid`, `u`.`username`, `u`.`phone`, `o`.`id` AS `oid`, `o`.`orderNo`, `o`.`productNo`, `o`.`name`, `o`.`price`, `o`.`count`, `o`.`money`, `o`.`status`, `o`.`primaryRelationship`, `o`.`secondaryRelationship`, `o`.`thirdRelationship`, `o`.`firstLevel`, `o`.`secondLevel`, `o`.`thirdLevel`, `o`.`receiveTime` FROM `heli_user` AS `u` INNER JOIN `heli_order` AS `o` ON `u`.`id` = `o`.`primaryRelationship` AND (`o`.`primaryRelationship` = :id OR `o`.`secondaryRelationship` = :id OR `o`.`thirdRelationship` = :id) AND `o`.`status` = 3 AND `o`.`receiveTime` >= :start AND `o`.`receiveTime` <= :end ORDER BY `receiveTime` ASC";
+									let o = {
+										start: req.query.start, 
+										end: req.query.end ,
+										id: req.query.uid
+									};
+
+									api.query(sql, o)
+										.then(result => {
+											res.json({id, auth, username, phone, msg: '查询成功', code: 3000, data: result});
+										})
+										.catch(err => {
+											res.json(common.server.error);
+										})
+
+								} else {
+									res.json({msg: '没有数据', code: 3001});
+								}
 							})
-								.then(result => {
-									res.json({msg: '查询成功', code: 3000, data: result});
-								})
-								.catch(err => {
-									res.json(common.server.error);
-								})
-						} else {
-							//其他无权限查询
-							res.json(common.auth.fail);
-						}
-
 					}
 				} else {
-					res.json({msg: '不存在该手机用户', code: 3001});
+					res.json(common.auth.fail);
 				}
 			})
 			.catch(err => {

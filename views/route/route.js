@@ -125,6 +125,16 @@ angular.module('app')
 					}]
 				}
 			})
+			.state('home.moneydetail', {
+				url: '/moneydetail/:p',
+				templateUrl: 'template/moneydetail/moneydetail.html',
+				controller: 'moneyDetailController',
+				resolve: {
+					des: ['$ocLazyLoad', function ($ocLazyLoad) {
+						return $ocLazyLoad.load('moneydetail');
+					}]
+				}
+			})
 			
 
 	}])
